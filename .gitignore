@@ -1,0 +1,17 @@
+*.txt
+*.docx
+.idea/
+__pycache__/
+archive/
+Code Revision/
+files/
+Learning/
+logs/
+venv/
+گزارش آماده برای تست/
+test.xlsx
+Test1.py
+Test2.py
+Test3.py
+Test4.py
+

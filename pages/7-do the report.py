@@ -1,0 +1,115 @@
+from main import main_function__to_be_called
+import streamlit as st
+import time
+from CONSTANTS import FILES_DIRECTORY
+# from CONSTANTS import FILES_DIRECTORY, LOGS_DIRECTORY, ARCHIVE_FILE_DIRECTORY__OF_UNSUCCESSFUL_MONTHLY_REPORT
+import os
+# from datetime import datetime
+# import win32com.client as win32
+# import shutil
+
+
+# ###########################################################################################################
+
+def save_the_uploaded_files():
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Aggregation File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    # Construct the full path for the file
+    save_path = os.path.join(FILES_DIRECTORY, st.session_state.aggregation_file.name)
+
+    # Save the file locally
+    with open(save_path, 'wb') as f:
+        f.write(st.session_state.aggregation_file.getbuffer())
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Monthly Report File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    # Construct the full path for the file
+    save_path = os.path.join(FILES_DIRECTORY, st.session_state.monthly_report_file.name)
+
+    # Save the file locally
+    with open(save_path, 'wb') as f:
+        f.write(st.session_state.monthly_report_file.getbuffer())
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Weekly Report Files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    for weekly_report in st.session_state.weekly_report_files:
+
+        # Construct the full path for the file
+        save_path = os.path.join(FILES_DIRECTORY, weekly_report.name)
+
+        # Save the file locally
+        with open(save_path, 'wb') as f:
+            f.write(weekly_report.getbuffer())
+
+
+def do_the_report():
+    st.session_state.progress_text = "Operation in progress. Please wait, saving the uploaded files... 3%"
+    st.session_state.progress_bar = st.progress(3, text=st.session_state.progress_text)
+
+    save_the_uploaded_files()
+
+    # ******************************************
+    # ******************************************
+
+    main_function__to_be_called()
+
+    # ******************************************
+    # ******************************************
+
+    st.session_state.report_is_done = True
+
+    st.session_state.progress_text = "Operation is finished."
+    st.session_state.progress_bar.progress(100, text=st.session_state.progress_text)
+
+    time.sleep(0.2)
+    st.write("\n")
+    st.write("\n")
+    st.success("The Report Is Ready.")
+    # st.success("The Report Is Ready. You can click the following link to get the excel report file")
+    st.write("\n")
+    # st.write("\n")
+
+
+def download_the_report_file(download_after_report_info_is_displayed=False):
+    if download_after_report_info_is_displayed is False:
+        report_file_fullname = fr"{FILES_DIRECTORY}\Report Made by Automation System.xlsx"
+    else:
+        report_file_fullname = fr"{st.session_state.target_directory_path_inside_archive}\Report Made by Automation System.xlsx"
+
+    with open(report_file_fullname, "rb") as file:
+
+        cols = st.columns(3)
+        with cols[1]:
+
+            st.session_state.download_button = st.download_button(
+                label="Download The Report File",
+                data=file,
+                file_name="Report Made by Automation System.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key="download_btn"
+            )
+
+# ###########################################################################################
+
+
+with st.container(border=True):
+    if "report_is_done" not in st.session_state:
+        do_the_report()
+
+        if st.session_state.report_is_done is True:
+            download_the_report_file()
+
+# ###########################################
+
+if "backspace_is_clicked_after_report_info_displayed" in st.session_state:
+    if st.session_state.backspace_is_clicked_after_report_info_displayed is True:
+        download_the_report_file(download_after_report_info_is_displayed=True)
+
+if st.session_state.report_is_done is True:
+    st.session_state.progress_text = "Operation is finished."
+    st.session_state.progress_bar.progress(100, text=st.session_state.progress_text)
+
+    st.write("\n")
+    if st.button("Display The Report Necessary Info To Check"):
+        st.switch_page("pages/8-display report info.py")
