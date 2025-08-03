@@ -1,22 +1,24 @@
 from main import main_function__to_be_called
 import streamlit as st
-import time
-from CONSTANTS import FILES_DIRECTORY
-# from CONSTANTS import FILES_DIRECTORY, LOGS_DIRECTORY, ARCHIVE_FILE_DIRECTORY__OF_UNSUCCESSFUL_MONTHLY_REPORT
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
 import os
-# from datetime import datetime
-# import win32com.client as win32
-# import shutil
+from returns.pipeline import is_successful
+from monthly.handle_errors import else_block_code, except_block_code
+from introduction import CURRENT_TIME
 
 
 # ###########################################################################################################
 
+
 def save_the_uploaded_files():
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Making The Directory %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    os.makedirs(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}")
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Aggregation File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     # Construct the full path for the file
-    save_path = os.path.join(FILES_DIRECTORY, st.session_state.aggregation_file.name)
+    save_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", st.session_state.aggregation_file.name)
 
     # Save the file locally
     with open(save_path, 'wb') as f:
@@ -25,7 +27,7 @@ def save_the_uploaded_files():
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Monthly Report File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     # Construct the full path for the file
-    save_path = os.path.join(FILES_DIRECTORY, st.session_state.monthly_report_file.name)
+    save_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", st.session_state.monthly_report_file.name)
 
     # Save the file locally
     with open(save_path, 'wb') as f:
@@ -36,7 +38,7 @@ def save_the_uploaded_files():
     for weekly_report in st.session_state.weekly_report_files:
 
         # Construct the full path for the file
-        save_path = os.path.join(FILES_DIRECTORY, weekly_report.name)
+        save_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", weekly_report.name)
 
         # Save the file locally
         with open(save_path, 'wb') as f:
@@ -52,28 +54,35 @@ def do_the_report():
     # ******************************************
     # ******************************************
 
-    main_function__to_be_called()
+    result = main_function__to_be_called()
+
+    if is_successful(result):
+        # print("Success:", result.unwrap())
+        else_block_code()
+    else:
+        # print("Failed:", result.failure())
+        except_block_code(result.failure())
 
     # ******************************************
     # ******************************************
 
-    st.session_state.report_is_done = True
-
-    st.session_state.progress_text = "Operation is finished."
-    st.session_state.progress_bar.progress(100, text=st.session_state.progress_text)
-
-    time.sleep(0.2)
-    st.write("\n")
-    st.write("\n")
-    st.success("The Report Is Ready.")
-    # st.success("The Report Is Ready. You can click the following link to get the excel report file")
-    st.write("\n")
+    # st.session_state.report_is_done = True
+    #
+    # st.session_state.progress_text = "Operation is finished."
+    # st.session_state.progress_bar.progress(100, text=st.session_state.progress_text)
+    #
+    # time.sleep(0.2)
     # st.write("\n")
+    # st.write("\n")
+    # st.success("The Report Is Ready.")
+    # # st.success("The Report Is Ready. You can click the following link to get the excel report file")
+    # st.write("\n")
+    # # st.write("\n")
 
 
 def download_the_report_file(download_after_report_info_is_displayed=False):
     if download_after_report_info_is_displayed is False:
-        report_file_fullname = fr"{FILES_DIRECTORY}\Report Made by Automation System.xlsx"
+        report_file_fullname = fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}\Report Made by Automation System.xlsx"
     else:
         report_file_fullname = fr"{st.session_state.target_directory_path_inside_archive}\Report Made by Automation System.xlsx"
 
@@ -105,6 +114,8 @@ with st.container(border=True):
 if "backspace_is_clicked_after_report_info_displayed" in st.session_state:
     if st.session_state.backspace_is_clicked_after_report_info_displayed is True:
         download_the_report_file(download_after_report_info_is_displayed=True)
+
+# ###########################################
 
 if st.session_state.report_is_done is True:
     st.session_state.progress_text = "Operation is finished."

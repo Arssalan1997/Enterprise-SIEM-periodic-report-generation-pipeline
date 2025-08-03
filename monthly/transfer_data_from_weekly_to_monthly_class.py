@@ -4,9 +4,10 @@ from openpyxl import load_workbook
 # from monthly import MainSheetOfWeeklyReportToTransferDataToMonthlyReport   # this import is included later
 # in this module, why not applied over here? because of preventing from circular module import issues
 from openpyxl.styles import Font, Border, Alignment, PatternFill
-from CONSTANTS import FILES_DIRECTORY, MAPPING_FILES_DIRECTORY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, MAPPING_FILES_DIRECTORY
 import streamlit as st
 import os
+from introduction import CURRENT_TIME
 
 
 class TransferDataFromWeeklyToMonthly:
@@ -80,7 +81,7 @@ class TransferDataFromWeeklyToMonthly:
 
         for weekly_report in st.session_state.weekly_report_files:
             # Construct the full path for the file
-            weekly_report_path = os.path.join(FILES_DIRECTORY, weekly_report.name)
+            weekly_report_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", weekly_report.name)
             self.filenames_of_needed_other_excel_files.append(weekly_report_path)
 
             # ------- To make GUI output showing weekly files with their sheet-names that have issues ----------
@@ -156,7 +157,7 @@ class TransferDataFromWeeklyToMonthly:
                 # #### Step 2 }}####
             # print("-" * 50)
 
-            workbook.save(fr"{FILES_DIRECTORY}\{basename_of_filename}")   # added later due to issues of non-stripped
+            workbook.save(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}\{basename_of_filename}")   # added later due to issues of non-stripped
             # sheet-names
 
             workbook.close()

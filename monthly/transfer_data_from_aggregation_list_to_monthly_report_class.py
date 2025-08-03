@@ -1,7 +1,8 @@
 from openpyxl import load_workbook
 import os
-from CONSTANTS import FILES_DIRECTORY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
 import streamlit as st
+from introduction import CURRENT_TIME
 
 
 class TransferDataFromAggregationListToMonthlyReport:
@@ -24,7 +25,7 @@ class TransferDataFromAggregationListToMonthlyReport:
         #                                    "located In ./TEST-REPORT Directory Path: ")
         # aggregation_list__filename = f"./TEST-REPORT/{aggregation_list__filename}"
 
-        aggregation_list__filename = os.path.join(FILES_DIRECTORY, st.session_state.aggregation_file.name)
+        aggregation_list__filename = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", st.session_state.aggregation_file.name)
 
         self.aggregation_list__workbook = load_workbook(aggregation_list__filename)
 

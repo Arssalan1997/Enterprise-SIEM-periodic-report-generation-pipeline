@@ -2,17 +2,20 @@ from monthly import HandlerOfMainSheetOfMonthlyReport
 from quarterly import HandlerOfMainSheetOfQuarterlyReport
 import streamlit as st
 import os
-from CONSTANTS import FILES_DIRECTORY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
 import time
+from returns.result import safe
+from introduction import CURRENT_TIME
 
 
+@safe
 def main_function__to_be_called():
 
     def receive_needed_data_from_user_to_do_the_report():
 
         report_type_ = st.session_state.report_type.lower()   # The options are capitalized in streamlit radio widget
         # of 'pages/1-determine kind of report.py' module
-        filename_ = os.path.join(FILES_DIRECTORY, st.session_state.monthly_report_file.name)
+        filename_ = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", st.session_state.monthly_report_file.name)
 
         # ---------- { progress bar   ----------
         for percent_complete in range(4, 6):

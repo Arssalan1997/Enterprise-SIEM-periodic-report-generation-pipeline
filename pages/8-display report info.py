@@ -1,35 +1,33 @@
 import streamlit as st
-from CONSTANTS import FILES_DIRECTORY, ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT
-from datetime import datetime
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT
 import os
 import shutil
+from introduction import CURRENT_TIME
+
 
 # ###########################################################################################
+
 
 def copy_all_files_from_files_directory_to_archive_directory():
 
     # ------------------ Making the target directory ------------------
-    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     # make the corresponding directory
-    st.session_state.target_directory_path_inside_archive = fr"{ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT}\{current_time}"
+    st.session_state.target_directory_path_inside_archive = fr"{ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT}\{CURRENT_TIME}"
 
     os.makedirs(st.session_state.target_directory_path_inside_archive)
 
     # ---------------------- Coping All The Files ---------------------
     # Copy each file
-    for file_name in os.listdir(FILES_DIRECTORY):
-        src_path = os.path.join(FILES_DIRECTORY, file_name)
+    for file_name in os.listdir(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}"):
+        src_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}", file_name)
         dst_path = os.path.join(st.session_state.target_directory_path_inside_archive, file_name)
 
         shutil.copy2(src_path, dst_path)  # copy2 preserves metadata
 
 
-def delete_all_files_from_files_directory():
-
-    for file_name in os.listdir(FILES_DIRECTORY):
-        filepath = os.path.join(FILES_DIRECTORY, file_name)
-        os.remove(filepath)
+def delete_directory_holding_the_uploaded_files_recursively():
+    shutil.rmtree(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}")
 
 # ###########################################################################################
 
@@ -132,6 +130,6 @@ with cols[0]:
 if "move_files_to_archive_directory__is_done" not in st.session_state:
 
     copy_all_files_from_files_directory_to_archive_directory()
-    delete_all_files_from_files_directory()
+    delete_directory_holding_the_uploaded_files_recursively()
 
     st.session_state.move_files_to_archive_directory__is_done = True
