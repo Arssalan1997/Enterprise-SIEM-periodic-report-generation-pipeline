@@ -1,8 +1,5 @@
 import streamlit as st
-from datetime import datetime
 
-
-CURRENT_TIME = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # ##############################################################################################################
 

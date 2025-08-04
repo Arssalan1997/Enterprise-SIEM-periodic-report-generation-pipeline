@@ -4,10 +4,9 @@ from openpyxl import load_workbook
 # from monthly import MainSheetOfWeeklyReportToTransferDataToMonthlyReport   # this import is included later
 # in this module, why not applied over here? because of preventing from circular module import issues
 from openpyxl.styles import Font, Border, Alignment, PatternFill
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, MAPPING_FILES_DIRECTORY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, MAPPING_FILES_DIRECTORY, CURRENT_TIME
 import streamlit as st
 import os
-from introduction import CURRENT_TIME
 
 
 class TransferDataFromWeeklyToMonthly:

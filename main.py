@@ -2,10 +2,9 @@ from monthly import HandlerOfMainSheetOfMonthlyReport
 from quarterly import HandlerOfMainSheetOfQuarterlyReport
 import streamlit as st
 import os
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, CURRENT_TIME
 import time
 from returns.result import safe
-from introduction import CURRENT_TIME
 
 
 @safe

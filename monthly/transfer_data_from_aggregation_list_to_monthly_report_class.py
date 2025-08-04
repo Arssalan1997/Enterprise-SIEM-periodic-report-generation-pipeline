@@ -1,8 +1,7 @@
 from openpyxl import load_workbook
 import os
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, CURRENT_TIME
 import streamlit as st
-from introduction import CURRENT_TIME
 
 
 class TransferDataFromAggregationListToMonthlyReport:

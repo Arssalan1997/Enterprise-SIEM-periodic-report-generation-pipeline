@@ -1,8 +1,7 @@
 import streamlit as st
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT, CURRENT_TIME
 import os
 import shutil
-from introduction import CURRENT_TIME
 
 
 # ###########################################################################################

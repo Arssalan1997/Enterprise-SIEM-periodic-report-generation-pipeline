@@ -1,11 +1,9 @@
 from main import main_function__to_be_called
 import streamlit as st
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, CURRENT_TIME
 import os
 from returns.pipeline import is_successful
 from monthly.handle_errors import else_block_code, except_block_code
-from introduction import CURRENT_TIME
-
 
 # ###########################################################################################################
 

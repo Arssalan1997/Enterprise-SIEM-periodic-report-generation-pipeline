@@ -1,7 +1,6 @@
 import streamlit as st
-from CONSTANTS import LOGS_DIRECTORY
+from CONSTANTS import LOGS_DIRECTORY, CURRENT_TIME
 import time
-from introduction import CURRENT_TIME
 
 
 def else_block_code():
@@ -24,6 +23,7 @@ def except_block_code(error):
 
         with open(error_logs_filepath, 'a') as f:
             f.write('\n')
+            f.write('\n')
             f.write(f"{CURRENT_TIME} - error -- '{_error}'")
 
     # --------------------------------------------------------------------
@@ -32,16 +32,13 @@ def except_block_code(error):
     with st.container(border=True):
         st.write("\n")
 
-        # test line:
-        st.write(error)
-
         st.warning("Something went wrong due to issues with uploaded files, "
                    "Please Contact The Developer Team Of The Tool!")
         st.write("\n")
         st.write("\n")
 
         st.markdown(
-            "<h1 style='color:blue; text-align:center; font-family:sans-serif;'>You can try again if you know what file(s) were uploaded incorrectly</h1>",
+            "<h1 style='color:blue; text-align:center; '>You can try again if you know what file(s) were uploaded incorrectly</h1>",
             unsafe_allow_html=True
         )
         # st.write("You can try again if you know what file(s) were uploaded incorrectly")

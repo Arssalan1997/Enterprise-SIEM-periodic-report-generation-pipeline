@@ -13,8 +13,7 @@ To make a clear distinction between methods belonging to each of the mentioned s
 from monthly import MainSheetOfMonthlyReport
 from openpyxl import load_workbook
 import xlwings as xw
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
-from introduction import CURRENT_TIME
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, CURRENT_TIME
 # import time
 
 
