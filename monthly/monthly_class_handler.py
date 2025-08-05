@@ -13,8 +13,9 @@ To make a clear distinction between methods belonging to each of the mentioned s
 from monthly import MainSheetOfMonthlyReport
 from openpyxl import load_workbook
 import xlwings as xw
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, CURRENT_TIME
+from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
 # import time
+import streamlit as st
 
 
 class HandlerOfMainSheetOfMonthlyReport:
@@ -208,7 +209,7 @@ class HandlerOfMainSheetOfMonthlyReport:
         """
 
         # self.workbook.save(filename="./TEST-REPORT/Report Made of Automation.xlsx")
-        self.workbook.save(filename=fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}\Report Made by Automation System.xlsx")
+        self.workbook.save(filename=fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx")
         self.workbook.close()
         # time.sleep(1)
 
@@ -224,7 +225,7 @@ class HandlerOfMainSheetOfMonthlyReport:
         # Open the Excel file in the background
         self.app = xw.App(visible=False)  # Set visible=False to hide Excel
         # self.wb = self.app.books.open('./TEST-REPORT/Report Made of Automation.xlsx')
-        self.wb = self.app.books.open(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}\Report Made by Automation System.xlsx")
+        self.wb = self.app.books.open(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx")
 
         # now that 'self.select_data_range_of_sheets' has been made ready to be used as a reference of data ranges of
         # line graph of each sheet, and the xlwings workbook is just initiated ==> these are sent to the following
@@ -234,7 +235,7 @@ class HandlerOfMainSheetOfMonthlyReport:
     def save_final_file_operation_after_select_data_phase(self):
         # Save the workbook
         # self.wb.save("./TEST-REPORT/Report Made of Automation.xlsx")
-        self.wb.save(fr"{FILES_DIRECTORY_OF_MONTHLY}\{CURRENT_TIME}\Report Made by Automation System.xlsx")
+        self.wb.save(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx")
 
         # Close the workbook
         self.wb.close()

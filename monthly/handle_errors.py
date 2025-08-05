@@ -1,5 +1,5 @@
 import streamlit as st
-from CONSTANTS import LOGS_DIRECTORY, CURRENT_TIME
+from CONSTANTS import LOGS_DIRECTORY
 import time
 
 
@@ -24,14 +24,13 @@ def except_block_code(error):
         with open(error_logs_filepath, 'a') as f:
             f.write('\n')
             f.write('\n')
-            f.write(f"{CURRENT_TIME} - error -- '{_error}'")
+            f.write(f"{st.session_state.CURRENT_TIME} - error -- '{_error}'")
 
     # --------------------------------------------------------------------
     st.session_state.report_is_done = False
 
     with st.container(border=True):
         st.write("\n")
-
         st.warning("Something went wrong due to issues with uploaded files, "
                    "Please Contact The Developer Team Of The Tool!")
         st.write("\n")
