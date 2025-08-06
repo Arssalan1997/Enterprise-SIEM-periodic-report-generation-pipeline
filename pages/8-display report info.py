@@ -11,21 +11,21 @@ def copy_all_files_from_files_directory_to_archive_directory():
     # ------------------ Making the target directory ------------------
 
     # make the corresponding directory
-    st.session_state.target_directory_path_inside_archive = fr"{ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT}\{st.session_state.CURRENT_TIME}"
+    st.session_state.target_directory_path_inside_archive = fr"{ARCHIVE_FILE_DIRECTORY__OF_MONTHLY_REPORT}\{st.session_state.sub_folder_name_of_upload_directory}"
 
     os.makedirs(st.session_state.target_directory_path_inside_archive)
 
     # ---------------------- Coping All The Files ---------------------
     # Copy each file
-    for file_name in os.listdir(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}"):
-        src_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}", file_name)
+    for file_name in os.listdir(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.sub_folder_name_of_upload_directory}"):
+        src_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.sub_folder_name_of_upload_directory}", file_name)
         dst_path = os.path.join(st.session_state.target_directory_path_inside_archive, file_name)
 
         shutil.copy2(src_path, dst_path)  # copy2 preserves metadata
 
 
 def delete_directory_holding_the_uploaded_files_recursively():
-    shutil.rmtree(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}")
+    shutil.rmtree(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.sub_folder_name_of_upload_directory}")
 
 # ###########################################################################################
 

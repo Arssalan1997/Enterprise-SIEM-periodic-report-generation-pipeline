@@ -19,6 +19,10 @@ def save_the_uploaded_files():
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Making The Directory %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     os.makedirs(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}")
 
+    # the following is inserted since in "pages/8-display report info.py" 'st.session_state.CURRENT_TIME' recreates the
+    # current time for unknown reason
+    st.session_state.sub_folder_name_of_upload_directory = os.path.basename(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}")
+
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Aggregation File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     # Construct the full path for the file
