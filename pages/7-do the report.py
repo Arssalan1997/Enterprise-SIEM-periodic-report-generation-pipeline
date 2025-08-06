@@ -74,19 +74,6 @@ def do_the_report():
     # ******************************************
     # ******************************************
 
-    # st.session_state.report_is_done = True
-    #
-    # st.session_state.progress_text = "Operation is finished."
-    # st.session_state.progress_bar.progress(100, text=st.session_state.progress_text)
-    #
-    # time.sleep(0.2)
-    # st.write("\n")
-    # st.write("\n")
-    # st.success("The Report Is Ready.")
-    # # st.success("The Report Is Ready. You can click the following link to get the excel report file")
-    # st.write("\n")
-    # # st.write("\n")
-
 
 def download_the_report_file(download_after_report_info_is_displayed=False):
     if download_after_report_info_is_displayed is False:
@@ -108,7 +95,6 @@ def download_the_report_file(download_after_report_info_is_displayed=False):
             )
 
 # ###########################################################################################
-
 
 with st.container(border=True):
     if "report_is_done" not in st.session_state:

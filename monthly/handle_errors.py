@@ -29,17 +29,28 @@ def except_block_code(error):
     # --------------------------------------------------------------------
     st.session_state.report_is_done = False
 
-    with st.container(border=True):
-        st.write("\n")
-        st.warning("Something went wrong due to issues with uploaded files, "
-                   "Please Contact The Developer Team Of The Tool!")
-        st.write("\n")
-        st.write("\n")
-
-        st.markdown(
-            "<h1 style='color:blue; text-align:center; '>You can try again if you know what file(s) were uploaded incorrectly</h1>",
-            unsafe_allow_html=True
-        )
-        # st.write("You can try again if you know what file(s) were uploaded incorrectly")
-
     log_if_error_happens(error)
+
+    # ############################################################################
+
+    st.write("\n")
+    st.write("\n")
+    st.warning("The Report Was Failed Most Probably Because Of Incorrect Uploads!")
+    time.sleep(1)
+    st.write("\n")
+    st.success("You Can Retry If You Know What Input(s) Were Made Incorrectly With Correct Ones!")
+    time.sleep(1)
+    st.write("\n")
+    st.warning("Please Contact The Developer Team Of The Tool To Check The Logs If You Are Certain That You Filled All Correctly")
+    st.write("\n")
+    st.write("\n")
+
+    time.sleep(1)
+    st.session_state.progress_bar.empty()
+
+    st.divider()
+
+    cols = st.columns(3)
+    with cols[1]:
+        if st.button("Retry With New Items"):
+            st.switch_page("pages/1-determine kind of report.py")
