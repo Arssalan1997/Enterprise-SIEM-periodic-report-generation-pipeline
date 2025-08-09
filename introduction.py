@@ -1,5 +1,9 @@
 import streamlit as st
+from reset_streamlit_session_variables import reset_streamlit_session_variables
 
+
+if st.session_state.keys():
+    reset_streamlit_session_variables()
 
 # ##############################################################################################################
 

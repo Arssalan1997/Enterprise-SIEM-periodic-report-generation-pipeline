@@ -1,6 +1,7 @@
 import streamlit as st
 from CONSTANTS import LOGS_DIRECTORY
 import time
+from reset_streamlit_session_variables import reset_streamlit_session_variables
 
 
 def else_block_code():
@@ -49,6 +50,9 @@ def except_block_code(error):
     st.session_state.progress_bar.empty()
 
     st.divider()
+
+    # resetting 'st.session_state' variables
+    reset_streamlit_session_variables()
 
     cols = st.columns(3)
     with cols[1]:
