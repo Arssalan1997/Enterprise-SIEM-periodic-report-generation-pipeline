@@ -53,4 +53,4 @@ def except_block_code(error):
     cols = st.columns(3)
     with cols[1]:
         if st.button("Retry With New Items"):
-            st.switch_page("pages/1-determine kind of report.py")
+            st.switch_page("introduction.py")

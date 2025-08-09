@@ -3,7 +3,7 @@ import streamlit as st
 from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
 import os
 from returns.pipeline import is_successful
-from monthly.handle_errors import else_block_code, except_block_code
+from handle_errors import else_block_code, except_block_code
 from monthly.specify_current_time import specify_current_time
 
 
@@ -98,6 +98,8 @@ def download_the_report_file(download_after_report_info_is_displayed=False):
 
 with st.container(border=True):
     if "report_is_done" not in st.session_state:
+        st.session_state.report_is_done = False
+
         do_the_report()
 
         if st.session_state.report_is_done is True:
