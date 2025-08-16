@@ -3,7 +3,7 @@ import streamlit as st
 from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
 import os
 from returns.pipeline import is_successful
-from monthly.handle_errors import else_block_code, except_block_code
+from handle_errors import else_block_code, except_block_code
 from monthly.specify_current_time import specify_current_time
 
 

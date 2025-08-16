@@ -14,7 +14,7 @@ st.write("\n")
 
 # Customizing the title using HTML and Markdown
 st.markdown(
-    "<h1 style='color:blue; text-align:center; font-family:sans-serif;'>Report Generator Tool Of Sadad SOC SIEM</h1>",
+    "<h1 style='color:blue; text-align:center; font-family:sans-serif;'>Report Generator Application Of Sadad SOC SIEM</h1>",
     unsafe_allow_html=True
 )
 
