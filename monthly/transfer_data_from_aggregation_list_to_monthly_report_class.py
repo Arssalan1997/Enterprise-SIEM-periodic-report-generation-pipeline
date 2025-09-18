@@ -96,6 +96,11 @@ class TransferDataFromAggregationListToMonthlyReport:
 
                         row[-1].value = row_record[1]
 
+                        # if the aggregation value is '0' ==> we need the corresponding message to be appended to the
+                        # following list
+                        if row[-1].value == 0:
+                            self.info_of_records_with_zero_as_aggregation_value[monthly_report_sheet.sheet.title].append(row[0].value)
+
                         break  # as soon as the message is found in a 'row_record' of the 'list_zip_...', there will
                         # be no need to continue the inner loop as there will be no 'row_record's afterwards that has
                         # the same message[if the aggregation list sheet has non-repeated records]
