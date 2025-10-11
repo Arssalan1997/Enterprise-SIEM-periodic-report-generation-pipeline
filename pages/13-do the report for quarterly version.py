@@ -1,10 +1,10 @@
 from main import main_function__to_be_called
 import streamlit as st
-from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY
+from CONSTANTS import FILES_DIRECTORY_OF_QUARTERLY
 import os
 from returns.pipeline import is_successful
 from handle_errors import else_block_code, except_block_code
-from monthly.specify_current_time import specify_current_time
+from specify_current_time import specify_current_time
 
 
 st.session_state.need_to_recalculate_current_time = True
@@ -17,40 +17,31 @@ st.session_state.need_to_recalculate_current_time = False
 def save_the_uploaded_files():
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Making The Directory %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    os.makedirs(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}")
+
+    os.makedirs(fr"{FILES_DIRECTORY_OF_QUARTERLY}\{st.session_state.CURRENT_TIME}")
 
     # the following is inserted since in "pages/8-display report info.py" 'st.session_state.CURRENT_TIME' recreates the
     # current time for unknown reason
-    st.session_state.sub_folder_name_of_upload_directory = os.path.basename(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}")
+    st.session_state.sub_folder_name_of_upload_directory = os.path.basename(fr"{FILES_DIRECTORY_OF_QUARTERLY}\{st.session_state.CURRENT_TIME}")
 
-    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Aggregation File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Quarterly Report File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     # Construct the full path for the file
-    save_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}", st.session_state.aggregation_file.name)
+    save_path = os.path.join(fr"{FILES_DIRECTORY_OF_QUARTERLY}\{st.session_state.CURRENT_TIME}", st.session_state.quarterly_report_file.name)
 
     # Save the file locally
     with open(save_path, 'wb') as f:
-        f.write(st.session_state.aggregation_file.getbuffer())
+        f.write(st.session_state.quarterly_report_file.getbuffer())
 
-    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Monthly Report File %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Monthly Report Files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    # Construct the full path for the file
-    save_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}", st.session_state.monthly_report_file.name)
-
-    # Save the file locally
-    with open(save_path, 'wb') as f:
-        f.write(st.session_state.monthly_report_file.getbuffer())
-
-    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Saving Weekly Report Files %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    for weekly_report in st.session_state.weekly_report_files:
-
+    for monthly_report in st.session_state.monthly_report_files:
         # Construct the full path for the file
-        save_path = os.path.join(fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}", weekly_report.name)
-
+        save_path = os.path.join(fr"{FILES_DIRECTORY_OF_QUARTERLY}\{st.session_state.CURRENT_TIME}", monthly_report.name)
         # Save the file locally
         with open(save_path, 'wb') as f:
-            f.write(weekly_report.getbuffer())
+            f.write(monthly_report.getbuffer())
 
 
 def do_the_report():
@@ -76,9 +67,11 @@ def do_the_report():
 
 
 def download_the_report_file(download_after_report_info_is_displayed=False):
+
     if download_after_report_info_is_displayed is False:
-        report_file_fullname = fr"{FILES_DIRECTORY_OF_MONTHLY}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx"
-    else:
+        report_file_fullname = fr"{FILES_DIRECTORY_OF_QUARTERLY}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx"
+
+    else:   # download_after_report_info_is_displayed = True
         report_file_fullname = fr"{st.session_state.target_directory_path_inside_archive}\Report Made by Automation System.xlsx"
 
     with open(report_file_fullname, "rb") as file:
@@ -119,4 +112,4 @@ if st.session_state.report_is_done is True:
 
     st.write("\n")
     if st.button("Display The Report Necessary Info To Check"):
-        st.switch_page("pages/8-display report info.py")
+        st.switch_page("pages/14-display report info for quarterly version.py")

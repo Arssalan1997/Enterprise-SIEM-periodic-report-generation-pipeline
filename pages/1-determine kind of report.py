@@ -23,4 +23,4 @@ with st.container(border=True):
                 st.switch_page("pages/2-determine number of last and current weeks of monthly report.py")
 
             elif st.session_state.report_type == "Quarterly":
-                st.switch_page("pages/fill quarterly report parameters.py")
+                st.switch_page("pages/9-receive report name of quarterly version.py")

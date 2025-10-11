@@ -64,19 +64,19 @@ if start_to_do_the_report__button:
 
     if st.session_state.number_of_needed_weekly_reports == 2:
         if (st.session_state.first_weekly_report_file is None) or (st.session_state.second_weekly_report_file is None):
-            st.warning("fill in all of the fields please!")
+            st.warning("do all the uploads please!")
             time.sleep(2)
             st.rerun()
         # --------------------------------
         else:
-            st.switch_page("pages/7-do the report.py")
+            st.switch_page("pages/7-do the report for monthly version.py")
 
     elif st.session_state.number_of_needed_weekly_reports == 3:
         if (st.session_state.first_weekly_report_file is None) or (st.session_state.second_weekly_report_file is None)\
                 or (st.session_state.third_weekly_report_file is None):
-            st.warning("fill in all of the fields please!")
+            st.warning("do all the uploads please!")
             time.sleep(2)
             st.rerun()
         # --------------------------------
         else:
-            st.switch_page("pages/7-do the report.py")
+            st.switch_page("pages/7-do the report for monthly version.py")

@@ -109,7 +109,7 @@ with st.container(border=True):
         st.write("The following Table Shows SheetNames That Are Found In Their Corresponding Weekly Report Files, But "
                  "Not Found In 'Monthly Report to Weekly Report Mapping.csv' file.\nPlease check whether you need to "
                  "add new sheet and record to the monthly report Excel spreadsheet file and also the "
-                 "'Monthly Report to Weekly Report Mapping.csv' mapping file.(The mapping file must be added by "
+                 "'Monthly Report to Weekly Report Mapping.csv' mapping file.(The mapping file must be edited by "
                  "The Automation System Developer)\n")
         st.dataframe(st.session_state.df__sheet_names_not_found_in_mapping_file)
     # --------------------------------------
@@ -120,7 +120,7 @@ cols = st.columns(9)
 with cols[0]:
     if st.button("Back"):
         st.session_state.backspace_is_clicked_after_report_info_displayed = True
-        st.switch_page("pages/7-do the report.py")
+        st.switch_page("pages/7-do the report for monthly version.py")
 
 # ############################# Part 2: Transfer The Files To The Archive Directory ##############################
 # #############################                                                     ##############################

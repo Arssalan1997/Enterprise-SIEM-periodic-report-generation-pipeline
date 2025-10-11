@@ -1,7 +1,3 @@
-"""
-Refer to description of 'monthly_class_handler.py' module
-"""
-
 from monthly import HandlerOfMainSheetOfMonthlyReport
 from quarterly import MainSheetOfQuarterlyReport
 from openpyxl import load_workbook
@@ -9,7 +5,6 @@ from openpyxl import load_workbook
 
 class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
 
-    # @staticmethod
     def operations_before_iterations_on_worksheets(self):
         MainSheetOfQuarterlyReport.receive_report_persian_name_to_include_in_first_sheet_from_user()
         MainSheetOfQuarterlyReport.receive_header_names_of_numerical_columns_from_user()
@@ -54,8 +49,23 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
     def operations_after_iterations_on_worksheets(self):
         MainSheetOfQuarterlyReport.display_sheets_with_issues()
 
+    def save_file_operation_before_select_data_phase(self):
+        """
+        should be customised
+        :return:
+        """
+        pass
+
     def operation_of_select_data(self):
+        """
+        should be customised
+        :return:
+        """
         pass
 
     def save_final_file_operation_after_select_data_phase(self):
+        """
+        should be customised
+        :return:
+        """
         pass
