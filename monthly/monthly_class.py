@@ -5,7 +5,6 @@ Contains classes that are used in monthly version of the project:
 """
 
 from openpyxl.styles import Font, Border, Alignment, PatternFill
-# from pprint import pprint
 import streamlit as st
 
 
@@ -52,6 +51,8 @@ class MainSheetOfMonthlyReport:
         Proper Output of Worksheets With Problems is needed. [the issue with Hoseein's weekly report that made me
         surprised|null cell...]
         """
+
+        from quarterly import MainSheetOfQuarterlyReport
 
         list_row_record_coordinates = list()   # keep coordinates of each row
 
@@ -103,6 +104,9 @@ class MainSheetOfMonthlyReport:
                 if self.__class__ == MainSheetOfMonthlyReport:
                     self.__class__.sheet_names_with_issues.append(self.sheet.title)
 
+                elif self.__class__ == MainSheetOfQuarterlyReport:
+                    self.__class__.sheet_names_with_issues.append(self.sheet.title)
+
                 return None
 
         # test lines
@@ -126,6 +130,9 @@ class MainSheetOfMonthlyReport:
             # before setting this condition, 'self.__class__.sheet_names_with_issues' used to have also sheet-names
             # of sheets with issues of weekly spreadsheet files as well, which is an inheritance matter of fact
             if self.__class__ == MainSheetOfMonthlyReport:
+                self.__class__.sheet_names_with_issues.append(self.sheet.title)
+
+            elif self.__class__ == MainSheetOfQuarterlyReport:
                 self.__class__.sheet_names_with_issues.append(self.sheet.title)
 
             return None
@@ -156,9 +163,6 @@ class MainSheetOfMonthlyReport:
         cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS = list(st.session_state.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS)
 
     def remove_values_of_cells_with_numerical_data(self):
-        """
-        Step 1
-        """
 
         if self.sheet_has_issue is True:
             return None
@@ -171,8 +175,10 @@ class MainSheetOfMonthlyReport:
 
         # clearing the aggregation column numbers of the first 3 sheets of the monthly version of the report
 
-        if self.__class__.counter_to_objects < 4:  # '<4':The first 3 sheets(Monthly Version) have aggregation columns
+        if (self.__class__ == MainSheetOfMonthlyReport) and (self.__class__.counter_to_objects < 4):
+            # '<4':The first 3 sheets(Monthly Version) have aggregation columns
             # Take a look at the Excel Spreadsheet to know why the column is added by 2
+
             aggregation_column_number = self.sheet[self.coordinate_of_up_right_number_boundary].column + 2
 
             for row in self.sheet.iter_rows(min_row=self.sheet[self.coordinate_of_up_right_number_boundary].row,
@@ -183,9 +189,6 @@ class MainSheetOfMonthlyReport:
                 row[0].value = ""  # sets the value to null
 
     def delete_message_column_content(self):
-        """
-        Step 3
-        """
 
         if self.sheet_has_issue is True:
             return None
@@ -623,9 +626,9 @@ class MainSheetOfMonthlyReport:
         #     # print(sheet_name)
         #     st.session_state.list_of_sheet_names_with_issues.append(sheet_name)
 
-        from monthly.make_report_info import make_list_of_sheet_names_with_issues_in_report_file
+        from monthly.make_report_info import make_list_of_sheet_names_with_issues_in_monthly_report_file
 
-        make_list_of_sheet_names_with_issues_in_report_file(st.session_state.list_of_sheet_names_with_issues)
+        make_list_of_sheet_names_with_issues_in_monthly_report_file(st.session_state.list_of_sheet_names_with_issues)
 
     @staticmethod
     def select_data_for_line_graph__and__clear_conditional_formatting_rules(wb_xlwings, select_data_range_of_sheets):

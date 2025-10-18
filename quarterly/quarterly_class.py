@@ -1,11 +1,6 @@
-"""
-Contains classes that are used in quarterly version of the project:
-1-'MainSheetOfQuarterlyReport' that inherits from 'MainSheetOfMonthlyReport' class
-2-...
-"""
-
 from monthly import MainSheetOfMonthlyReport
 from openpyxl import load_workbook
+import streamlit as st
 
 
 class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
@@ -36,8 +31,23 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
         It Will Later Be Implemented In A GUI Style
         """
 
-        cls.REPORT_PERSIAN_NAME_TO_INCLUDE_IN_FIRST_SHEET = input("\nEnter The Report Name In Persian To Include In "
-                                                                  "First Sheet Of The Report(Sample Value:'بهار 03'): ")
+        # cls.REPORT_PERSIAN_NAME_TO_INCLUDE_IN_FIRST_SHEET = input("\nEnter The Report Name In Persian To Include In "
+        #                                                "First Sheet Of The Report(Sample Value:'بهار 03'): ")
+        cls.REPORT_PERSIAN_NAME_TO_INCLUDE_IN_FIRST_SHEET = st.session_state.report_name
+
+    @classmethod
+    def determine_number_of_last_report_numerical_columns(cls):
+        """
+        :return: There is no no need for this method in this class.(The number always equals to 3)
+        """
+        return None
+
+    @classmethod
+    def determine_number_of_current_report_numerical_columns(cls):
+        """
+        :return: There is no no need for this method in this class.(The number always equals to 3)
+        """
+        return None
 
     @classmethod
     def receive_header_names_of_numerical_columns_from_user(cls):
@@ -45,11 +55,13 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
         It Will Later Be Implemented In A GUI Style
         """
 
-        print("\n##### Time Range Receive(Please Hit Enter Key After Each Month Name) #####")
+        # print("\n##### Time Range Receive(Please Hit Enter Key After Each Month Name) #####")
+        #
+        # for i in range(cls.NUMBER_OF_LAST_REPORT_NUMERICAL_COLUMNS):
+        #     item = input(f"Header Name '{i + 1}' = ")
+        #     cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS.append(item)
 
-        for i in range(cls.NUMBER_OF_LAST_REPORT_NUMERICAL_COLUMNS):
-            item = input(f"Header Name '{i + 1}' = ")
-            cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS.append(item)
+        cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS = list(st.session_state.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS)
 
     @classmethod
     def extract_needed_values_from_first_sheet(cls, filename):
@@ -87,14 +99,7 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
             # should be ignored
             return None
 
-        if self.sheet_has_issue is True:
-            return None
-
-        # clearing the numerical values of sequent time_based columns
-
-        for row in self.list_of_numerical_cells_coordinates:
-            for coordinate in row:
-                self.sheet[coordinate].value = ""
+        super().remove_values_of_cells_with_numerical_data()
 
     def delete_message_column_content(self):
         if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
@@ -126,32 +131,18 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
             self.sheet["C24"] = self.__class__.LAST_SEASON_BMI_TOTAL
             self.sheet["C25"] = self.__class__.LAST_SEASON_MY_BMI_TOTAL
 
+    def insert_or_delete_one_column_if_needed(self):
+        """
+        :return: There is no no need for this method in this class.
+        """
+        return None
+
     def header_date_fields_update(self):
         if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
             # should be ignored
             return None
 
         super().header_date_fields_update()
-
-    @classmethod
-    def determine_number_of_last_report_numerical_columns(cls):
-        """
-        :return: There is no no need for this method in this class.(The number always equals to 3)
-        """
-        return None
-
-    @classmethod
-    def determine_number_of_current_report_numerical_columns(cls):
-        """
-        :return: There is no no need for this method in this class.(The number always equals to 3)
-        """
-        return None
-
-    def insert_or_delete_one_column_if_needed(self):
-        """
-        :return: There is no no need for this method in this class.
-        """
-        return None
 
     def update_font_and_style_of_the_new_numerical_column_if_inserted(self):
         """
@@ -160,8 +151,17 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
         return None
 
     def update_all_formulas(self):
+
         if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
             # should be ignored
             return None
 
         super().update_all_formulas()
+
+    @classmethod
+    def display_sheets_with_issues(cls):
+        st.session_state.list_of_sheet_names_with_issues = list(cls.sheet_names_with_issues)
+
+        from quarterly.make_report_info import make_list_of_sheet_names_with_issues_in_quarterly_report_file
+
+        make_list_of_sheet_names_with_issues_in_quarterly_report_file(st.session_state.list_of_sheet_names_with_issues)

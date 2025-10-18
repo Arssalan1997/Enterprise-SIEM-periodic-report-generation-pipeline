@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
-def make_list_of_sheet_names_with_issues_in_report_file(list_of_sheet_names_with_issues):
+def make_list_of_sheet_names_with_issues_in_quarterly_report_file(list_of_sheet_names_with_issues):
 
     # to easily access at display time
     st.session_state.df__sheet_names_with_issues_in_report_file = pd.DataFrame({
