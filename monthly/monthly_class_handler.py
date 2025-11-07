@@ -76,10 +76,10 @@ class HandlerOfMainSheetOfMonthlyReport:
         # now that the intended object is instantiated, it is time to go for the operations implemented within different
         # methods of the 'TransferDataFromWeeklyToMonthly' class
         self.transfer_data_from_weekly_to_monthly_class__object.make_mapping_list_of_monthly_to_weekly_sheet_names()
-        self.transfer_data_from_weekly_to_monthly_class__object.determine_number_of_needed_other_excel_files()
+        self.transfer_data_from_weekly_to_monthly_class__object.determine_other_excel_files()
 
         self.transfer_data_from_weekly_to_monthly_class__object. \
-            strip_sheet_names__and_check_if_new_sheet_is_found_in_all_other_excel_spreadsheet_files()
+            strip_sheet_names__and__check_if_new_sheet_is_found_in_all_other_excel_spreadsheet_files()
 
         self.transfer_data_from_weekly_to_monthly_class__object.provides_other_excel_spreadsheets_to_work_on()
 

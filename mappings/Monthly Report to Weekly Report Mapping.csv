@@ -38,4 +38,3 @@ Source nonTCP Other,Source nonTCP Other
 Source TCP BMI,Source TCP BMI
 Source TCP MY BMI,Source TCP BAAM
 Source TCP Others,Source TCP other
-DNSTarget,DNSTarget

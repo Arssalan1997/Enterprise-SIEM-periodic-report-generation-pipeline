@@ -1,0 +1,40 @@
+ArcSightRules, ArcSightRules
+ArcSightRules-top Countries, ArcSightRules-top Countries
+ArcSightRulesBMI, ArcSightRulesBMI
+ArcSightRulesBMI-top Countries, ArcSightRulesBMI-top Countries
+ArcSightRulesMY, ArcSightRulesMY
+ArcSightRulesMY-top Countries, ArcSightRulesMY-top Countries
+ArcSightRulesMobileGW, ArcSightRulesMobileGW
+EventSources, EventSources
+Source nonTCP BMI, Source nonTCP BMI
+Source nonTCP MYBMI, Source nonTCP MYBMI
+Source nonTCP Other, Source nonTCP Other
+Source TCP BMI, Source TCP BMI
+Source TCP MY BMI, Source TCP MY BMI
+Source TCP Others, Source TCP Others
+Fortigate, Fortigate
+Fortigate Dropped BMI, Fortigate Dropped BMI
+Fortigate Dropped BAAM, Fortigate Dropped BAAM
+Fortigate Dropped MobileGW, Fortigate Dropped MobileGW
+Fortiweb, Fortiweb
+Fortiweb Matched BAAM-BMI, Fortiweb Matched BAAM-BMI
+Fortiweb Matched BMI, Fortiweb Matched BMI
+Fortiweb Matched BAAM, Fortiweb Matched BAAM
+Fortiweb Matched MobileGW, Fortiweb Matched MobileGW
+HTTPCodesBMI,HTTPCodesBMI
+HTTPCodesMYBMI, HTTPCodesMYBMI
+HTTP Codes MobileGW, HTTP Codes MobileGW
+HTTP Codes Other, HTTP Codes Other
+ProtocolsTraffic on BAAM_BMI, ProtocolsTraffic on BAAM_BMI
+ProtocolsTraffic on BMI, ProtocolsTraffic on BMI
+ProtocolsTraffic on MY BMI, ProtocolsTraffic on MY BMI
+ProtocolsTraffic on MobileGW, ProtocolsTraffic on MobileGW
+ProtocolsTraffic on Others, ProtocolsTraffic on Others
+FTD-IPS, FTD-IPS
+FTD-SecInt, FTD-SecInt
+FTD Malware Block, FTD Malware Block
+FTD Blocked BAAM-BMI, FTD Blocked BAAM-BMI
+FTD Blocked BMI, FTD Blocked BMI
+FTD Blocked BAAM, FTD Blocked BAAM
+FTD Blocked MobileGW,FTD Blocked MobileGW
+FTD Blocked Other, FTD Blocked Other

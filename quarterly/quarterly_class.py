@@ -50,20 +50,6 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
         return None
 
     @classmethod
-    def receive_header_names_of_numerical_columns_from_user(cls):
-        """
-        It Will Later Be Implemented In A GUI Style
-        """
-
-        # print("\n##### Time Range Receive(Please Hit Enter Key After Each Month Name) #####")
-        #
-        # for i in range(cls.NUMBER_OF_LAST_REPORT_NUMERICAL_COLUMNS):
-        #     item = input(f"Header Name '{i + 1}' = ")
-        #     cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS.append(item)
-
-        cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS = list(st.session_state.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS)
-
-    @classmethod
     def extract_needed_values_from_first_sheet(cls, filename):
         """
         Important note for future: There is a possibility that the cell coordinates referenced in this method change as

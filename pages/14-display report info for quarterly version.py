@@ -71,21 +71,21 @@ with st.container(border=True):
     st.divider()
     st.write("\n")
 
-    # --------- Display SheetNames Not Found In 'Quarterly Report to Monthly Report Mapping.csv' file ------------
+    # ------- Display SheetNames Not Found In 'Quarterly Report to Monthly Report Mapping.csv[Monthly]' file --------
 
     no_need_to_show__df__sheet_names_not_found_in_mapping_file = st.\
         session_state.df__sheet_names_not_found_in_mapping_file['SheetName'].apply(lambda x: x == []).all()
 
     if no_need_to_show__df__sheet_names_not_found_in_mapping_file:
         st.write("All The Monthly Report Files have been found in 'Quarterly Report to Monthly Report Mapping.csv' "
-                 "file. No further check is required")
+                 "file records. No further check is required")
 
     elif not no_need_to_show__df__sheet_names_not_found_in_mapping_file:
         st.write("The following Table Shows SheetNames That Are Found In Their Corresponding Monthly Report Files, But "
-                 "Not Found In 'Quarterly Report to Monthly Report Mapping.csv' file.\nPlease check whether you need "
-                 "to add new sheet and record to the quarterly report Excel spreadsheet file and also the "
-                 "'Quarterly Report to Monthly Report Mapping.csv' mapping file.(The mapping file must be edited by "
-                 "The Automation System Developers)\n")
+                 "Not Found As A Record In 'Quarterly Report to Monthly Report Sheet-Name Mapping'.\nPlease check "
+                 "whether you need to add new sheet and record to the Quarterly Report Excel Spreadsheet File and also "
+                 "the 'Quarterly Report to Monthly Report Sheet-Name Mapping' File respectively.(The mapping file must "
+                 "be edited by The Automation Application Developers On Its Server)\n")
         st.dataframe(st.session_state.df__sheet_names_not_found_in_mapping_file)
     # --------------------------------------
 

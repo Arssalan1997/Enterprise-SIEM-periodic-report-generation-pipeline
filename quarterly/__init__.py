@@ -1,2 +1,3 @@
 from .quarterly_class import MainSheetOfQuarterlyReport
 from .quarterly_class_handler import HandlerOfMainSheetOfQuarterlyReport
+from .transfer_data_from_monthly_to_quarterly_class import TransferDataFromMonthlyToQuarterly

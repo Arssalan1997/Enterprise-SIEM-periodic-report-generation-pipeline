@@ -1,9 +1,7 @@
 from monthly import HandlerOfMainSheetOfMonthlyReport
 from quarterly import MainSheetOfQuarterlyReport
 from openpyxl import load_workbook
-# import xlwings as xw
 from CONSTANTS import FILES_DIRECTORY_OF_QUARTERLY
-# import streamlit as st
 
 
 class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
@@ -21,11 +19,18 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
         # ###########################################
 
         # ########################################### {{ ###########################################
-        """
-        What To Include:
-        
-        'TransferDataFromMonthlyToQuarterly' class must be developed
-        """
+
+        from quarterly import TransferDataFromMonthlyToQuarterly
+        self.transfer_data_from_monthly_to_quarterly_class__object = TransferDataFromMonthlyToQuarterly()
+
+        self.transfer_data_from_monthly_to_quarterly_class__object.make_mapping_list_of_quarterly_to_monthly_sheet_names()
+        self.transfer_data_from_monthly_to_quarterly_class__object.determine_other_excel_files()
+
+        self.transfer_data_from_monthly_to_quarterly_class__object.\
+            strip_sheet_names__and__check_if_new_sheet_is_found_in_all_other_excel_spreadsheet_files()
+
+        self.transfer_data_from_monthly_to_quarterly_class__object.provides_other_excel_spreadsheets_to_work_on()
+
         # ########################################### }} ###########################################
 
     def operations_of_iterations_on_worksheets(self):
