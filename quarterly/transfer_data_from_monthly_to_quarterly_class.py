@@ -5,6 +5,7 @@ from openpyxl.styles import Font, Border, Alignment, PatternFill
 from CONSTANTS import FILES_DIRECTORY_OF_QUARTERLY, MAPPING_FILES_DIRECTORY
 import streamlit as st
 import os
+from CONSTANTS import LOGS_DIRECTORY
 
 
 class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
@@ -90,13 +91,21 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
 
         make_sheet_names_not_found_in_mapping_file(filename_as_key_and_sheet_names_in_file_but_not_in_mapping_file_as_value)
 
-    @staticmethod
-    def delete_needed_number_of_rows_in_monthly_report(monthly_report_sheet, count_of_messages_of_weekly_report,
-                                                       number_of_rows_to_delete):
+    def provides_other_excel_spreadsheets_to_work_on(self):
         """
-        :param monthly_report_sheet: the tasks are done towards sheets of monthly report spreadsheet file
-        :param count_of_messages_of_weekly_report:
-        :param number_of_rows_to_delete: the difference between rows in monthly and weekly reports
+        loads monthly report Excel Spreadsheet Files using 'openpyxl' module as we will work on their separate worksheets
+        """
+
+        for filename in self.filenames_of_needed_other_excel_files:
+            self.list_of_other_workbooks.append(load_workbook(filename, read_only=True, data_only=True))
+
+    @staticmethod
+    def delete_needed_number_of_rows_in_quarterly_report(quarterly_report_sheet, count_of_messages_of_monthly_report,
+                                                         number_of_rows_to_delete):
+        """
+        :param quarterly_report_sheet: the tasks are done towards sheets of quarterly report spreadsheet file
+        :param count_of_messages_of_monthly_report:
+        :param number_of_rows_to_delete: the difference between rows in quarterly and monthly reports
 
         ################ %%% ################
         This method takes on 2 related responsibilities:
@@ -107,82 +116,76 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
         # ############## Step 1 ##############
 
         # detecting the row number from which the rows-removal process must start
-        target_cell_coordinate = monthly_report_sheet.list_of_numerical_cells_coordinates[
-            count_of_messages_of_weekly_report][0]  # why not the following?
+        target_cell_coordinate = quarterly_report_sheet.list_of_numerical_cells_coordinates[
+            count_of_messages_of_monthly_report][0]  # why not the following?
 
         # ### { ###
-        # target_cell_coordinate = monthly_report_sheet.list_of_numerical_cells_coordinates[
-        #     count_of_messages_of_weekly_report - 1][0]
-        # ### } ###  ==> the target row is the one right after we check same number of rows as messages in weekly report
+        # target_cell_coordinate = quarterly_report_sheet.list_of_numerical_cells_coordinates[
+        #     count_of_messages_of_monthly_report - 1][0]
+        # ### } ### ==> the target row is the one right after we check same number of rows as messages in monthly report
 
-        row_number_to_start_deletion_from = monthly_report_sheet.sheet[target_cell_coordinate].row
-        monthly_report_sheet.sheet.delete_rows(idx=row_number_to_start_deletion_from, amount=number_of_rows_to_delete)
+        row_number_to_start_deletion_from = quarterly_report_sheet.sheet[target_cell_coordinate].row
+        quarterly_report_sheet.sheet.delete_rows(idx=row_number_to_start_deletion_from, amount=number_of_rows_to_delete)
 
         # ############## Step 2 ##############
 
         # '.update_all_formulas()' method in 'MainSheetOfMonthlyReport' class works properly as long as
         # '.list_of_numerical_cells_coordinates' remains update before the method is called; now we had some rows
-        # deleted in 'monthly_report_sheet', so the 'matrix of coordinates'('.list_of_numerical_cells_coordinates')
+        # deleted in 'quarterly_report_sheet', so the 'matrix of coordinates'('.list_of_numerical_cells_coordinates')
         # must change in a way that the coordinates of deleted rows get removed from the matrix, if we do not do this,
         # the formulas will be incorrect.
-        [monthly_report_sheet.list_of_numerical_cells_coordinates.pop(-1) for i in range(number_of_rows_to_delete)]
+        [quarterly_report_sheet.list_of_numerical_cells_coordinates.pop(-1) for i in range(number_of_rows_to_delete)]
 
     @staticmethod
-    def update_boundary_coordinates_because_row_removal_or_insertion_happened(monthly_report_sheet):
+    def update_boundary_coordinates_because_row_removal_or_insertion_happened(quarterly_report_sheet):
         """
         row removal or insertion happened, and the matrix of numerical cells coordinates
         ('list_of_numerical_cells_coordinates') changed, so we update boundary coordinates that have been changed
         """
 
-        monthly_report_sheet.coordinate_of_down_left_number_boundary = \
-            monthly_report_sheet.list_of_numerical_cells_coordinates[-1][0]
+        quarterly_report_sheet.coordinate_of_down_left_number_boundary = \
+            quarterly_report_sheet.list_of_numerical_cells_coordinates[-1][0]
 
-        monthly_report_sheet.coordinate_of_down_right_number_boundary = \
-            monthly_report_sheet.list_of_numerical_cells_coordinates[-1][-1]
+        quarterly_report_sheet.coordinate_of_down_right_number_boundary = \
+            quarterly_report_sheet.list_of_numerical_cells_coordinates[-1][-1]
 
     @staticmethod
-    def copy_data_step(monthly_report_sheet, weekly_report_to_be_transferred__sheet):
+    def copy_data_step(quarterly_report_sheet, monthly_report_to_be_transferred__sheet):
         """
-        We will have 3 steps in this method:
+        We will have 2 steps in this method:
 
-        1-copying message value from weekly report
-        2-copying last week numerical value from weekly report
-        3-copying this week numerical value from weekly report
+        1-copying message value from monthly report
+        2-copying total('total * aggregation' for first three sheets) value from monthly report
         """
 
         index = 0  # an each-step-incremented variable used to do a loop-like process at the same time with the
         # loop.
 
-        # each 'row' within the loop will contain three first cells in rows of the sheets that contain numerical columns
+        # each 'row' within the loop will contain two first cells in rows of the sheets that contain numerical columns
         # first cell: message value needs to be copied to
-        # second cell: last week numerical value needs to be copied to
-        # third cell: this week numerical value needs to be copied to
-        for row in monthly_report_sheet.sheet.iter_rows(
-                min_row=monthly_report_sheet.sheet[monthly_report_sheet.coordinate_of_up_left_number_boundary].row,
-                max_row=monthly_report_sheet.sheet[monthly_report_sheet.coordinate_of_down_left_number_boundary].row,
-                min_col=monthly_report_sheet.sheet[
-                            monthly_report_sheet.coordinate_of_up_left_number_boundary].column - 1,
-                max_col=monthly_report_sheet.sheet[
-                            monthly_report_sheet.coordinate_of_up_left_number_boundary].column + 1
+        # second cell: total('total * aggregation' for first three sheets) value needs to be copied to
+        for row in quarterly_report_sheet.sheet.iter_rows(
+                min_row=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_up_left_number_boundary].row,
+                max_row=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_left_number_boundary].row,
+                min_col=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_up_left_number_boundary].column - 1,
+                max_col=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_up_left_number_boundary].column
         ):
-            # step 1: message copy
-            row[0].value = weekly_report_to_be_transferred__sheet.list_of_messages[index]
-            # row[0].value = "test1"
-            # step 2: last week num copy
-            row[1].value = weekly_report_to_be_transferred__sheet.list_of_last_week_values[index]
-            # row[1].value = "test2"
-            # step 3: this week num copy
-            row[2].value = weekly_report_to_be_transferred__sheet.list_of_this_week_values[index]
-            # row[2].value = "test3"
 
+            # step 1: message value copy
+            row[0].value = monthly_report_to_be_transferred__sheet.list_of_messages[index]
+
+            # step 2: total('total * aggregation' for first three sheets) value copy
+            row[1].value = monthly_report_to_be_transferred__sheet.list_of_total_values[index]
+
+            # ------------------------
             index += 1  # incremented so that we can have access to the next item within the corresponding lists of
-            # 'weekly_report_to_be_transferred__sheet' object
+            # 'monthly_report_to_be_transferred__sheet' object
 
     @staticmethod
-    def insert_needed_number_of_rows_in_monthly_report(monthly_report_sheet, number_of_rows_to_insert):
+    def insert_needed_number_of_rows_in_monthly_report(quarterly_report_sheet, number_of_rows_to_insert):
         """
-        :param monthly_report_sheet: the tasks are done towards sheets of monthly report spreadsheet file
-        :param number_of_rows_to_insert: the difference between rows in weekly and monthly reports
+        :param quarterly_report_sheet: the tasks are done towards sheets of quarterly report spreadsheet file
+        :param number_of_rows_to_insert: the difference between rows in monthly and quarterly reports
 
         ################ %%% ################
         This method takes on 3 related responsibilities:
@@ -194,10 +197,10 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
 
         # ############################### Step 1 ###############################
 
-        row_number_to_start_insertion_from = monthly_report_sheet.sheet[
-                                                 monthly_report_sheet.coordinate_of_down_left_number_boundary].row + 1
+        row_number_to_start_insertion_from = quarterly_report_sheet.sheet[
+                                             quarterly_report_sheet.coordinate_of_down_left_number_boundary].row + 1
 
-        monthly_report_sheet.sheet.insert_rows(idx=row_number_to_start_insertion_from, amount=number_of_rows_to_insert)
+        quarterly_report_sheet.sheet.insert_rows(idx=row_number_to_start_insertion_from, amount=number_of_rows_to_insert)
 
         # ############################### Step 2 ###############################
 
@@ -208,25 +211,15 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
             # of numerical cells coordinates, the iterator('row_number_difference') in this loop will not be used in
             # its body since we just need to do the following tasks 'number_of_rows_to_insert' number of times
 
-            for coordinate in monthly_report_sheet.list_of_numerical_cells_coordinates[-1]:  # we will use the last
+            for coordinate in quarterly_report_sheet.list_of_numerical_cells_coordinates[-1]:  # we will use the last
                 # list within the matrix of coordinates(which stands for the last rows of coordinates in the matrix) to
                 # calculate the following row and column numbers
 
-                # think of the monthly report file to grasp it; the new cell is located right below the last cell on
-                # the last row in matrix[last in here means the one already has its coordinate in the matrix]
-                # 'row_number_difference': the last row of cell coordinates that is within the matrix of coordinates
-                # before this step is our base to add row number in the following line of code
-
-                # Why not the following:
-                # 'row_number_of_inserted_cell = monthly_report_sheet.sheet[coordinate].row + row_number_difference'
-                # response: the preceding 'for' finds 'monthly_report_sheet.list_of_numerical_cells_coordinates[-1]'
-                # dynamically
-
-                row_number_of_inserted_cell = monthly_report_sheet.sheet[coordinate].row + 1
-                column_number_of_inserted_cell = monthly_report_sheet.sheet[coordinate].column
+                row_number_of_inserted_cell = quarterly_report_sheet.sheet[coordinate].row + 1
+                column_number_of_inserted_cell = quarterly_report_sheet.sheet[coordinate].column
 
                 # now that we have the row & column numbers, we can calculate the coordinate of the new cell
-                inserted_cell_coordinate = monthly_report_sheet.sheet.cell(
+                inserted_cell_coordinate = quarterly_report_sheet.sheet.cell(
                     row=row_number_of_inserted_cell, column=column_number_of_inserted_cell).coordinate
 
                 temp_list_of_added_row_of_numerical_cells_coordinates.append(inserted_cell_coordinate)
@@ -234,7 +227,7 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
             # we now have 'inserted_cell_coordinate's of each inserted row saved in the temp list, we first append it
             # to the matrix of coordinates and then clear the temp list for next step of the outer list(operations
             # for next inserted row)
-            monthly_report_sheet.list_of_numerical_cells_coordinates.append(
+            quarterly_report_sheet.list_of_numerical_cells_coordinates.append(
                 temp_list_of_added_row_of_numerical_cells_coordinates)
             temp_list_of_added_row_of_numerical_cells_coordinates = []
 
@@ -245,26 +238,21 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
         reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows = list()
 
         # {{
-        # ############## Today the message column in monthly report has not non-default font and style, but tomorrow
-        # the story might be different. That is why we also include it in reference list and will then try to use for
-        # the message columns of newly inserted rows in each sheet of the monthly report file. ##############
-
         # the reference row is located one row before 'row_number_to_start_insertion_from'
         row_number_of_message_cell_in_last_row_before_newly_inserted_rows = row_number_to_start_insertion_from - 1
 
         # the message column is located one column before:
         # 'coordinate_of_down_left_number_boundary'['coordinate_of_up_left_number_boundary']
-        column_number_of_message_cell_in_last_row_before_newly_inserted_rows = monthly_report_sheet.sheet[
-                                                                                   monthly_report_sheet.coordinate_of_down_left_number_boundary].column - 1
+        column_number_of_message_cell_in_last_row_before_newly_inserted_rows = quarterly_report_sheet.sheet[
+            quarterly_report_sheet.coordinate_of_down_left_number_boundary].column - 1
 
         # cell with the preceding row and column numbers
-        message_cell_in_last_row_before_newly_inserted_rows = monthly_report_sheet.sheet. \
+        message_cell_in_last_row_before_newly_inserted_rows = quarterly_report_sheet.sheet. \
             cell(row=row_number_of_message_cell_in_last_row_before_newly_inserted_rows,
                  column=column_number_of_message_cell_in_last_row_before_newly_inserted_rows)
 
         # the following list, holding the reference row cells, has message cell as its first item
-        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(
-            message_cell_in_last_row_before_newly_inserted_rows)
+        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(message_cell_in_last_row_before_newly_inserted_rows)
         # }}
 
         # ### time to append next items of the reference row list that can be accessed using 'for-loop' ###
@@ -272,100 +260,47 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
         # {{
         # iterates over 'cell_coordinate's in last row before the preceding row-insertions happened
 
-        # why the row with index '[-number_of_rows_to_insert - 1]' is used to iterate over? now that our matrix has been
-        # completed in step 2 of this method, we can go back in indexes of the matrix and after
-        # 'number_of_rows_to_insert' of backward, we reach to the first-inserted-row, one row before is the target row
-        # reference for font and style
-        for cell_coordinate in monthly_report_sheet.list_of_numerical_cells_coordinates[-number_of_rows_to_insert - 1]:
+        for cell_coordinate in quarterly_report_sheet.list_of_numerical_cells_coordinates[-number_of_rows_to_insert - 1]:
             reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows. \
-                append(monthly_report_sheet.sheet[cell_coordinate])
+                append(quarterly_report_sheet.sheet[cell_coordinate])
         # }}
 
         # ### time to append 'total' cell to the reference row list ###
         # {{
         # 'total' cell is located after the last item in reference row of cells for font and style
-        last_cell_within_reference_row_for_font_and_style = \
-        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows[-1]
+        last_cell_within_reference_row_for_font_and_style = reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows[-1]
 
         row_number = last_cell_within_reference_row_for_font_and_style.row  # same row as last cell in
         # reference row of cells for font and style
         column_number = last_cell_within_reference_row_for_font_and_style.column + 1  # 'total' cell in
         # row of cells for font and style are located at the right position of last item within
         # 'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows'.
-        cell = monthly_report_sheet.sheet.cell(row=row_number, column=column_number)
+        total_cell = quarterly_report_sheet.sheet.cell(row=row_number, column=column_number)
 
         # appending 'total' cell will be the addition before last addition of cells for making
         # reference row of cells for font and style
-        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(cell)
+        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(total_cell)
         # }}
-
-        # ### The following steps of appending cells to reference row of cells for font and style is only valid for
-        # first three sheets of monthly report file that has 'Aggregation' & 'Total*Aggregation' cells ###
-
-        # {{
-        # Note: We consider the three first sheets that have 'Aggregation' & 'Total*Aggregation' columns in
-        # monthly report
-
-        # the first three sheets needs the addition of the following items to
-        # 'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows'
-        if monthly_report_sheet.__class__.counter_to_objects <= 3:
-
-            # 2 cells are left in this case to be appended: 'Aggregation' & 'Total*Aggregation'; which are located after
-            # the last item in 'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows' to complete
-            # the reference row for font and style of first three sheets of monthly report
-            last_cell_within_reference_row_for_font_and_style = \
-            reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows[-1]
-
-            # 2 cells to append to the row cell ==> 2 iterations for the 'for-loop'
-            for i in range(1, 3):
-                # using the last cell in 'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows', we
-                # find row & column numbers of 'Aggregation' & 'Total*Aggregation' cells to generate these two cells
-
-                row_number = last_cell_within_reference_row_for_font_and_style.row  # same row as last cell in
-                # reference row of cells for font and style
-                column_number = last_cell_within_reference_row_for_font_and_style.column + i  # 'Aggregation' &
-                # 'Total*Aggregation' cells in row of cells for font and style are located at the right position of
-                # last item within 'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows'.
-                cell = monthly_report_sheet.sheet.cell(row=row_number, column=column_number)
-
-                # appending 'Aggregation' & 'Total*Aggregation' cells will be the last addition of cells for making
-                # reference row of cells for font and style
-                reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(cell)
-
-        # }}                End of making reference row of cells for font and style which is the following list:
-        #                   'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows'
 
         # ###############################
         # ###############################
 
         # 2) using the reference row of cells for font and style to change font and style of the newly added rows cells
 
-        # ##### max column of the iteration process through newly added rows becomes different at first three sheets
-        # of monthly report since they have also 'Aggregation' & 'Total*Aggregation' columns #####
-        # {
         max_column_count_to_apply_font_and_style_to_newly_inserted_rows = \
-            monthly_report_sheet.sheet[monthly_report_sheet.coordinate_of_down_right_number_boundary].column + 1
+            quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_right_number_boundary].column + 1
         # the preceding targets the total column
 
-        # considering first three sheets of monthly report that have 'Aggregation' & 'Total*Aggregation' columns as well
-        if monthly_report_sheet.__class__.counter_to_objects <= 3:
-            max_column_count_to_apply_font_and_style_to_newly_inserted_rows += 2
-        # }
-
         # Iterates over rows previously inserted.
-        # (for three first sheets of monthly report: the 'Aggregation' & 'Total*Aggregation' columns also included)
 
         # What is the reason behind the value assigned to 'min_col'? x - [1] ==> '1': to include message column as well
         # which is located at left side of first numerical column
-        for row_of_cells in monthly_report_sheet.sheet.iter_rows(
-                min_row=row_number_to_start_insertion_from,
-                max_row=row_number_to_start_insertion_from + number_of_rows_to_insert - 1,
-                min_col=column_number_of_message_cell_in_last_row_before_newly_inserted_rows,
-                max_col=max_column_count_to_apply_font_and_style_to_newly_inserted_rows
-        ):
-
-            # At each row of preceding 'for-loop', we will encounter multiple cells saved within a tuple, we then
-            # iterate through the very tuple to work on its cells
+        for row_of_cells in quarterly_report_sheet.sheet.iter_rows(
+                                        min_row=row_number_to_start_insertion_from,
+                                        max_row=row_number_to_start_insertion_from + number_of_rows_to_insert - 1,
+                                        min_col=column_number_of_message_cell_in_last_row_before_newly_inserted_rows,
+                                        max_col=max_column_count_to_apply_font_and_style_to_newly_inserted_rows
+                                                                   ):
 
             index = 0  # to iterate simultaneously on items of reference row of cells for font and style, increment
             # process is applied inside 'for'
@@ -373,9 +308,6 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
             for target_cell in row_of_cells:
                 source_cell = reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows[index]
                 index += 1  # to point to next item of the list in next iteration of the loop
-
-                # The following is an exact copy of a code snippet in following:
-                # './monthly/monthly_class.py/.update_font_and_style_of_the_new_numerical_column_if_inserted(self)'
 
                 # Copy font
                 if source_cell.font:
@@ -423,168 +355,117 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
                         fill_type=source_cell.fill.fill_type
                     )
 
-    def provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from(self, monthly_report_sheet,
-                                                                         index_of_other_workbook):
-        """
-        provides other weekly report File sheet for data copy after taking several steps
-
-        :param monthly_report_sheet:
-        :param index_of_other_workbook: all other(weekly) workbooks are saved in 'self.list_of_other_workbooks', so we
-        need to know which one is the target workbook to work on at each call of this method
-        :return: 'weekly_report_to_be_transferred__sheet'
-
-        Steps of this method are as follows:
-
-        1-detection of the corresponding 'weekly_report_sheet_name'
-        2-'try' to have 'sheet' ready by applying 'sheet = workbook[sheet-name]' openpyxl method
-        3-instantiating an object of 'MainSheetOfWeeklyReportToTransferDataToMonthlyReport' class for each sheet of
-        weekly report
-        4-checking if 'weekly_report_to_be_transferred__sheet' has issue, if yes: output a suitable message and return
-        'None'
-        5-reaching out to step 5 means that the 'weekly_report_to_be_transferred__sheet' has no issue thus it is okay
-        to return it
-        """
+    def provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from(self, quarterly_report_sheet, index_of_other_workbook):
 
         #    ##########      STEP 1      ##########
 
         # why applying '.strip()'? because the following dictionary has already stripped the sheet-names of both monthly
-        # and weekly reports.(monthly_report_sheet.sheet.title has not been stripped already)
-        if monthly_report_sheet.sheet.title.strip() in self.dict_of_mapping_list_of_monthly_to_weekly_sheet_names.keys():
+        # and weekly reports.(quarterly_report_sheet.sheet.title has not been stripped already)
+        if quarterly_report_sheet.sheet.title.strip() in self.dict_of_mapping_list_of_quarterly_to_monthly_sheet_names.keys():
 
-            monthly_report_sheet_name = monthly_report_sheet.sheet.title
-            weekly_report_sheet_name = self.dict_of_mapping_list_of_monthly_to_weekly_sheet_names[
-                monthly_report_sheet_name.strip()]
+            quarterly_report_sheet_name = quarterly_report_sheet.sheet.title
+            monthly_report_sheet_name = self.dict_of_mapping_list_of_quarterly_to_monthly_sheet_names[quarterly_report_sheet_name.strip()]
 
             #    ##########      STEP 2      ##########
 
-            # if confused about the following: review openpyxl module.
-            try:
-                sheet = self.list_of_other_workbooks[index_of_other_workbook][weekly_report_sheet_name]
-
-            except KeyError as error:
-                # the following error print will finally be included in GUI implementation of the project
-                print(error)
-                print("-" * 50)
-                return None
-
-            except Exception as error:
-                # the following error print will finally be included in GUI implementation of the project
-                print(error)
-                print("-" * 50)
-                return None
+            sheet = self.list_of_other_workbooks[index_of_other_workbook][monthly_report_sheet_name]
 
             #    ##########      STEP 3      ##########
 
-            from monthly import MainSheetOfWeeklyReportToTransferDataToMonthlyReport
+            from quarterly import MainSheetOfMonthlyReportToTransferDataToQuarterlyReport
 
-            # now 'sheet' is ready for sending as a parameter to the corresponding transfer class, the syntax is
-            # same as what can be seen in 'monthly/monthly_class_handler.py/
-            # method operations_of_iterations_on_worksheets()'
-            weekly_report_to_be_transferred__sheet = MainSheetOfWeeklyReportToTransferDataToMonthlyReport(sheet)
+            try:
+                monthly_report_to_be_transferred__sheet = MainSheetOfMonthlyReportToTransferDataToQuarterlyReport\
+                    (sheet, st.session_state.monthly_report_files__number_of_numerical_columns[index_of_other_workbook])
+
+            except Exception as error:
+                error_logs_filepath = rf'{LOGS_DIRECTORY}\error logs.txt'
+
+                with open(error_logs_filepath, 'a') as f:
+                    f.write('\n')
+                    f.write(f"{st.session_state.CURRENT_TIME} -- Type Of Report: '{st.session_state.report_type}'"
+                            f" -- SheetName Of Other Files: '{monthly_report_sheet_name}' -- error -- '{error}'")
 
             #    ##########      STEP 4      ##########
 
-            if weekly_report_to_be_transferred__sheet.sheet_has_issue is True:
-                # print("-" * 50)
-                # the following might be changed when implementing 'sum-if' because the next filenames will be needed
-                # then
+                basename_of_filename = os.path.basename(self.filenames_of_needed_other_excel_files[index_of_other_workbook])
+                self.filename_as_key__and__sheet_names_with_issue_as_value[basename_of_filename].append(monthly_report_sheet_name)
 
-                # we need the basename of filename(not the fullname), the following key has already been made within
-                # 'determine_number_of_needed_other_excel_files()' method, it is a list that we will append item to it.
-                basename_of_filename = os.path.basename(
-                    self.filenames_of_needed_other_excel_files[index_of_other_workbook])
+                return None
 
-                self.filename_as_key__and__sheet_names_with_issue_as_value[basename_of_filename].append(
-                    weekly_report_to_be_transferred__sheet.sheet.title)
+            if monthly_report_to_be_transferred__sheet.sheet_has_issue is True:
 
-                # print(f"Within weekly report file '{self.filenames_of_needed_other_excel_files[index_of_other_workbook]}', "
-                #       f"the sheet '{weekly_report_to_be_transferred__sheet.sheet.title}' has issue which makes it "
-                #       f"impossible to transfer its data to monthly report Excel Spreadsheet file, 'transfer_data_from_weekly_to_monthly_class.py': 534")
+                basename_of_filename = os.path.basename(self.filenames_of_needed_other_excel_files[index_of_other_workbook])
+                self.filename_as_key__and__sheet_names_with_issue_as_value[basename_of_filename].append(monthly_report_sheet_name)
 
                 return None
 
             #    ##########      STEP 5      ##########
 
-            return weekly_report_to_be_transferred__sheet
+            return monthly_report_to_be_transferred__sheet
 
-    def copy_data_from_second_weekly_excel_file_to_report_file(self, monthly_report_sheet):
-        """
-        manages copy operations of second weekly report Excel Spreadsheet File to monthly report Excel Spreadsheet
-        File for each sheet of monthly_report. At every call one of monthly report sheets is passed to this method
-
-        :param monthly_report_sheet:  called directly from 'monthly_class_handler.py' ==> 'monthly_report_sheet' is
-        delivered first to this method within this class
-        :return: None(does the operations towards monthly report file)
-        """
+    def copy_data_from_first_monthly_excel_file_to_report_file(self, quarterly_report_sheet):
 
         #    ##########      STEP 1      ##########
 
-        weekly_report_to_be_transferred__sheet = self.provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from \
-            (monthly_report_sheet, index_of_other_workbook=0)  # why 'index_of_other_workbook' = 0 ==> as the name of
-        # the method suggests, the first other weekly Excel Spreadsheet is target for the copy operations ==> this index
-        # will be used in '.provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from()' method to have access to
-        # the first other weekly workbook
+        monthly_report_to_be_transferred__sheet = self.provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from \
+            (quarterly_report_sheet, index_of_other_workbook=0)
 
-        # for the weekly report sheets that have issues, the return value from the last call is 'None' ==> we need to
-        # return the 'None' to the first method call (which is from the 'monthly_class_handler.py') to prevent from
-        # continuation of execution in this method leading to errors as 'weekly_report_to_be_transferred__sheet' would
-        # be 'None'
-        if weekly_report_to_be_transferred__sheet is None:
+        if monthly_report_to_be_transferred__sheet is None:
             return None
 
         #    ##########      STEP 2      ##########
 
-        # ############## Number Of Records Comparison Between Monthly & Weekly Reports ##############
+        # ############## Number Of Records Comparison Between Quarterly & Monthly Reports ##############
         # There will be 3 different conditions each checked separately as follows:
 
-        # 1)  number of record rows in monthly report > number of records in weekly report.
+        # 1)  number of record rows in quarterly report > number of records in monthly report.
         # length of '.list_of_numerical_cells_coordinates' stands for the number of records in each report
-        if len(monthly_report_sheet.list_of_numerical_cells_coordinates) > \
-                len(weekly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates):
+        if len(quarterly_report_sheet.list_of_numerical_cells_coordinates) > \
+                len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates):
 
-            # the following length variable is used to detect from which row in monthly report we need to
+            # the following length variable is used to detect from which row in quarterly report we need to
             # delete rows
-            count_of_messages_of_weekly_report = len(weekly_report_to_be_transferred__sheet.
-                                                     list_of_numerical_cells_coordinates)
+            count_of_messages_of_monthly_report = len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates)
 
             # we need to know the difference integer value of last if in order to do the deletion of rows in
-            # monthly report spreadsheet file.
-            number_of_rows_to_delete = len(monthly_report_sheet.list_of_numerical_cells_coordinates) \
-                                       - len(weekly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates)
+            # quarterly report spreadsheet file.
+            number_of_rows_to_delete = len(quarterly_report_sheet.list_of_numerical_cells_coordinates) \
+                                       - len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates)
 
             # the following method does the deletion process. the parameters: first: the task is going to
-            # affect the 'monthly_report_sheet', second: to detect from which row of 'monthly_report_sheet' the
+            # affect the 'quarterly_report_sheet', second: to detect from which row of 'quarterly_report_sheet' the
             # deletion process must start, third: no comment needed
-            self.delete_needed_number_of_rows_in_monthly_report(monthly_report_sheet,
-                                                                count_of_messages_of_weekly_report,
-                                                                number_of_rows_to_delete)
-            self.update_boundary_coordinates_because_row_removal_or_insertion_happened(monthly_report_sheet)
+            self.delete_needed_number_of_rows_in_quarterly_report(quarterly_report_sheet,
+                                                                  count_of_messages_of_monthly_report,
+                                                                  number_of_rows_to_delete)
 
-            self.copy_data_step(monthly_report_sheet, weekly_report_to_be_transferred__sheet)
+            self.update_boundary_coordinates_because_row_removal_or_insertion_happened(quarterly_report_sheet)
 
-        #  #################    #################
-
-        # 2)  number of record rows in monthly report = number of records in weekly report.
-        elif len(monthly_report_sheet.list_of_numerical_cells_coordinates) == \
-                len(weekly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates):
-
-            self.copy_data_step(monthly_report_sheet, weekly_report_to_be_transferred__sheet)
+            self.copy_data_step(quarterly_report_sheet, monthly_report_to_be_transferred__sheet)
 
         #  #################    #################
 
-        # 3)  number of record rows in monthly report < number of records in weekly report.
-        elif len(monthly_report_sheet.list_of_numerical_cells_coordinates) < \
-                len(weekly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates):
+        # 2)  number of record rows in quarterly report = number of records in monthly report.
+        elif len(quarterly_report_sheet.list_of_numerical_cells_coordinates) == \
+                len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates):
 
-            number_of_rows_to_insert = len(weekly_report_to_be_transferred__sheet.
-                                           list_of_numerical_cells_coordinates) - \
-                                       len(monthly_report_sheet.list_of_numerical_cells_coordinates)
+            self.copy_data_step(quarterly_report_sheet, monthly_report_to_be_transferred__sheet)
 
-            self.insert_needed_number_of_rows_in_monthly_report(monthly_report_sheet, number_of_rows_to_insert)
+        #  #################    #################
 
-            self.update_boundary_coordinates_because_row_removal_or_insertion_happened(monthly_report_sheet)
+        # 3)  number of record rows in quarterly report < number of records in monthly report.
+        elif len(quarterly_report_sheet.list_of_numerical_cells_coordinates) < \
+                len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates):
 
-            self.copy_data_step(monthly_report_sheet, weekly_report_to_be_transferred__sheet)
+            number_of_rows_to_insert = len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates) - \
+                                       len(quarterly_report_sheet.list_of_numerical_cells_coordinates)
+
+            self.insert_needed_number_of_rows_in_monthly_report(quarterly_report_sheet, number_of_rows_to_insert)
+
+            self.update_boundary_coordinates_because_row_removal_or_insertion_happened(quarterly_report_sheet)
+
+            self.copy_data_step(quarterly_report_sheet, monthly_report_to_be_transferred__sheet)
 
     def transfer_data_from_forth_weekly_excel_file_using_sum_if_formula_to_report_file(self, monthly_report_sheet):
         """
@@ -939,15 +820,11 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
                         # be no need to continue the inner loop as there will be no 'row_record's afterwards that has
                         # the same message[if the weekly report sheet has non-repeated messages]
 
-    def close_weekly_report_excel_spreadsheet_files(self):
+    def close_monthly_report_excel_spreadsheet_files(self):
         for workbook in self.list_of_other_workbooks:
             workbook.close()
 
     def send__dictionary_of_filename_as_key__and__sheet_names_with_issue_as_value_to_the_needed_function(self):
-        """
-        After all iterations of worksheets finished, 'self.filename_as_key__and__sheet_names_with_issue_as_value' is
-        completed. We send it to the following function.
-        """
 
-        from monthly.make_report_info import make_sheet_names_with_issues_in_weekly_report_files
-        make_sheet_names_with_issues_in_weekly_report_files(self.filename_as_key__and__sheet_names_with_issue_as_value)
+        from quarterly.make_report_info import make_sheet_names_with_issues_in_monthly_report_files
+        make_sheet_names_with_issues_in_monthly_report_files(self.filename_as_key__and__sheet_names_with_issue_as_value)

@@ -20,7 +20,7 @@ class MainSheetOfMonthlyReport:
 
     counter_to_objects = 0
 
-    sheet_names_with_issues = list()  # This will be displayed to user in a GUI style
+    sheet_names_with_issues = list()
 
     def __init__(self, sheet):
         self.__class__.counter_to_objects += 1
@@ -45,6 +45,19 @@ class MainSheetOfMonthlyReport:
 
         self.list_of_messages = list()   # within a certain sheet of the monthly report: message items will all be
         # stored in a list that will later will be compared to the weekly report file messages for data transfer
+
+        # ############################
+        from quarterly import MainSheetOfMonthlyReportToTransferDataToQuarterlyReport
+
+        if (self.__class__ == MainSheetOfMonthlyReportToTransferDataToQuarterlyReport) and\
+                (self.sheet_has_issue is False):
+
+            self.make_list_of_messages()    # used in Quarterly Report Tool Of The Application ==>
+            # 'quarterly\transfer_data_from_monthly_to_quarterly_class.py\copy_data_step()'
+
+            self.list_of_total_values = list()   # for three first sheets: (total * aggregation) values
+            self.make_list_of_total_values()     # makes 'list_of_total_values' ready for use within the following:
+            # 'quarterly\transfer_data_from_monthly_to_quarterly_class.py\copy_data_step()'
 
     def calculate_all_coordinate_attributes(self):
         """
@@ -93,12 +106,6 @@ class MainSheetOfMonthlyReport:
             else:       # for rows with a weired number of numerical values
                 self.sheet_has_issue = True
 
-                # test lines
-                # from monthly import MainSheetOfWeeklyReportToTransferDataToMonthlyReport
-                # if self.__class__ == MainSheetOfWeeklyReportToTransferDataToMonthlyReport:
-                #     import pdb; pdb.set_trace()
-                #     # print(100)
-
                 # before setting this condition, 'self.__class__.sheet_names_with_issues' used to have also sheet-names
                 # of sheets with issues of weekly spreadsheet files as well, which is an inheritance matter of fact
                 if self.__class__ == MainSheetOfMonthlyReport:
@@ -108,12 +115,6 @@ class MainSheetOfMonthlyReport:
                     self.__class__.sheet_names_with_issues.append(self.sheet.title)
 
                 return None
-
-        # test lines
-        # print()
-        # print(f"'list_of_numerical_cells_coordinates' for this worksheet['{self.sheet.title}']:")
-        # pprint(self.list_of_numerical_cells_coordinates)
-        # print("-" * 100)
 
         # Now that we have the square of coordinates :)
         # (take a look at the Excel spreadsheet file to know why I call it a square), it is time to extract the
@@ -149,16 +150,6 @@ class MainSheetOfMonthlyReport:
 
     @classmethod
     def receive_header_names_of_numerical_columns_from_user(cls):
-        # print("\n##### Time Range Receive(Please Hit Enter Key After Each Date) #####")
-
-        # print("##### The number of last month report weeks should be equal to its equivalent in this month\n"
-        #       "##### In later version of the program, you will be able to set a different value for the number of"
-        #       " weeks for current report ####")
-
-        # sample = ["06/03 to 06/09", "06/10 to 06/16", "06/17 to 06/23", "06/24 to 06/30"]
-        # for i in range(cls.NUMBER_OF_CURRENT_REPORT_NUMERICAL_COLUMNS):
-        #     item = input(f"Header Name '{i + 1}' = ")
-        #     cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS.append(item)
 
         cls.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS = list(st.session_state.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS)
 
@@ -682,3 +673,42 @@ class MainSheetOfMonthlyReport:
                     break   # as soon as the target record(tuple) is found with the help of the mentioned if-condition,
                     # and then the operations are done towards the corresponding sheet of xlwings ==> we break the inner
                     # for-loop to prevent from the useless continuation of it.
+
+    # ############################
+
+    def make_list_of_total_values(self):
+        """
+        It will be used if the following condition would be True: 'st.session_state.report_type == "Quarterly"'
+        """
+
+        # within the following sheets ==> we use (total*aggregation) column instead of total column
+        titles_of_three_first_sheets = ['ArcSightRules', 'ArcSightRulesMY', 'ArcSightRulesBMI']
+
+        if self.sheet.title in titles_of_three_first_sheets:
+
+            for row in self.sheet.iter_rows(min_row=self.sheet[self.coordinate_of_up_left_number_boundary].row,
+                                            max_row=self.sheet[self.coordinate_of_down_left_number_boundary].row,
+                                            min_col=self.sheet[self.coordinate_of_up_left_number_boundary].column,
+                                            max_col=self.sheet[self.coordinate_of_up_right_number_boundary].column + 2
+                                            ):
+                total = 0
+
+                for i in range(self.__class__.NUMBER_OF_LAST_REPORT_NUMERICAL_COLUMNS):
+                    total += row[i].value
+
+                total_multiplied_by_aggregation = total * row[-1].value
+                self.list_of_total_values.append(total_multiplied_by_aggregation)
+
+        else:
+
+            for row in self.sheet.iter_rows(min_row=self.sheet[self.coordinate_of_up_left_number_boundary].row,
+                                            max_row=self.sheet[self.coordinate_of_down_left_number_boundary].row,
+                                            min_col=self.sheet[self.coordinate_of_up_left_number_boundary].column,
+                                            max_col=self.sheet[self.coordinate_of_up_right_number_boundary].column
+                                            ):
+                total = 0
+
+                for i in range(self.__class__.NUMBER_OF_LAST_REPORT_NUMERICAL_COLUMNS):
+                    total += row[i].value
+
+                self.list_of_total_values.append(total)

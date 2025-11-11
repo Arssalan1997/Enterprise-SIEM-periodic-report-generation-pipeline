@@ -8,16 +8,24 @@ st.markdown(
 )
 
 st.session_state.monthly_report_files = list()
+st.session_state.monthly_report_files__number_of_numerical_columns = list()
 
 # ###############################################################################################################
 with st.form(key="upload_of_monthly_report_files"):
 
     for i in range(3):
+        st.write(f"###### Select number of weeks(number of numerical columns) of '{i + 1}'th monthly report file please.")
+        number_of_numerical_columns = st.radio("no need", [4, 5], key=f"number_of_numerical_columns__{i + 1}",
+                                               label_visibility="hidden")
+        st.session_state.monthly_report_files__number_of_numerical_columns.append(number_of_numerical_columns)
+
+        st.write("\n")
+
         st.write(f"###### Upload '{i + 1}'th monthly report file please.")
         monthly_report_file = st.file_uploader("no need", label_visibility="hidden",
                                                key=f"'{i + 1}'th monthly report file upload", type=["xlsx"])
-
         st.session_state.monthly_report_files.append(monthly_report_file)
+
         st.divider()
 
     cols = st.columns(3)

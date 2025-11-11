@@ -37,7 +37,7 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
         """
         Differences towards the base class corresponding method:
 
-        1-calling '.receive_filename_and_save_needed_values_on_first_sheet()' method
+        1-calling '.extract_needed_values_from_first_sheet()' method
         2-calling 'update_first_sheet_info()' method on the first worksheet
         """
 
@@ -54,10 +54,10 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
         counter = 0
         for sheet_name in sheet_names:
             counter += 1
+
             sheet = self.workbook[sheet_name]
             quarterly_report_sheet = MainSheetOfQuarterlyReport(sheet)
-            # test line
-            # print(isinstance(main_sheet, MainSheetOfQuarterlyReport))  # all outputs ==> 'True'
+
             quarterly_report_sheet.remove_values_of_cells_with_numerical_data()
             quarterly_report_sheet.delete_message_column_content()
 
@@ -69,13 +69,8 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
 
             if (quarterly_report_sheet.sheet_has_issue is False) and (counter >= 3):
 
-                # ########################################### {{ ###########################################
-                """
-                What To Include:
-
-                Data Transfer From Monthly Report Files To Quarterly Report Files Operations
-                """
-                # ########################################### }} ###########################################
+                self.transfer_data_from_monthly_to_quarterly_class__object.\
+                    copy_data_from_first_monthly_excel_file_to_report_file(quarterly_report_sheet)
 
                 """
                 The following is used to make 'self.select_data_range_of_sheets' which is a list containing tuples
@@ -94,27 +89,23 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
                                                                            column=column_number_of_end_cell).coordinate
 
                 self.select_data_range_of_sheets.append((
-                    quarterly_report_sheet.sheet.title,
-                    coordinate_of_start_cell,
-                    coordinate_of_end_cell))
+                                                        quarterly_report_sheet.sheet.title,
+                                                        coordinate_of_start_cell,
+                                                        coordinate_of_end_cell))
 
             # ###########################################
             # 'TransferDataFromAggregationListToMonthlyReport' is not used in quarterly version of the project
             # ###########################################
 
+            # ----------------------------------------------------
             quarterly_report_sheet.update_all_formulas()
 
     def operations_after_iterations_on_worksheets(self):
 
-        # ########################################### {{ ###########################################
-        """
-        What To Include:
+        self.transfer_data_from_monthly_to_quarterly_class__object.close_monthly_report_excel_spreadsheet_files()
 
-        Data Transfer From Monthly Report Files To Quarterly Report Files Operations ==>
-        1-closing monthly report files
-        2-preparing related output dictionary
-        """
-        # ########################################### }} ###########################################
+        self.transfer_data_from_monthly_to_quarterly_class__object. \
+            send__dictionary_of_filename_as_key__and__sheet_names_with_issue_as_value_to_the_needed_function()
 
         # ###########################################
         # 'TransferDataFromAggregationListToMonthlyReport' is not used in quarterly version of the project

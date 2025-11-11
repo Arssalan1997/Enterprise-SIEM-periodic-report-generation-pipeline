@@ -1,11 +1,10 @@
 import csv
 from openpyxl import load_workbook
-# from monthly import MainSheetOfWeeklyReportToTransferDataToMonthlyReport   # this import is included later
-# in this module, why not applied over here? because of preventing from circular module import issues
 from openpyxl.styles import Font, Border, Alignment, PatternFill
 from CONSTANTS import FILES_DIRECTORY_OF_MONTHLY, MAPPING_FILES_DIRECTORY
 import streamlit as st
 import os
+from CONSTANTS import LOGS_DIRECTORY
 
 
 class TransferDataFromWeeklyToMonthly:
@@ -133,8 +132,7 @@ class TransferDataFromWeeklyToMonthly:
         """
 
         for filename in self.filenames_of_needed_other_excel_files:
-
-            self.list_of_other_workbooks.append(load_workbook(filename))
+            self.list_of_other_workbooks.append(load_workbook(filename, read_only=True, data_only=True))
 
     @staticmethod
     def delete_needed_number_of_rows_in_monthly_report(monthly_report_sheet, count_of_messages_of_weekly_report,
@@ -219,6 +217,7 @@ class TransferDataFromWeeklyToMonthly:
             row[2].value = weekly_report_to_be_transferred__sheet.list_of_this_week_values[index]
             # row[2].value = "test3"
 
+            # ------------------------
             index += 1  # incremented so that we can have access to the next item within the corresponding lists of
             # 'weekly_report_to_be_transferred__sheet' object
 
@@ -239,7 +238,7 @@ class TransferDataFromWeeklyToMonthly:
         # ############################### Step 1 ###############################
 
         row_number_to_start_insertion_from = monthly_report_sheet.sheet[
-                                                 monthly_report_sheet.coordinate_of_down_left_number_boundary].row + 1
+                                             monthly_report_sheet.coordinate_of_down_left_number_boundary].row + 1
 
         monthly_report_sheet.sheet.insert_rows(idx=row_number_to_start_insertion_from, amount=number_of_rows_to_insert)
 
@@ -333,11 +332,11 @@ class TransferDataFromWeeklyToMonthly:
         column_number = last_cell_within_reference_row_for_font_and_style.column + 1  # 'total' cell in
         # row of cells for font and style are located at the right position of last item within
         # 'reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows'.
-        cell = monthly_report_sheet.sheet.cell(row=row_number, column=column_number)
+        total_cell = monthly_report_sheet.sheet.cell(row=row_number, column=column_number)
 
         # appending 'total' cell will be the addition before last addition of cells for making
         # reference row of cells for font and style
-        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(cell)
+        reference_cells_of_last_row_for_font_and_style_of_newly_inserted_rows.append(total_cell)
         # }}
 
         # ### The following steps of appending cells to reference row of cells for font and style is only valid for
@@ -495,21 +494,7 @@ class TransferDataFromWeeklyToMonthly:
 
         #    ##########      STEP 2      ##########
 
-            # if confused about the following: review openpyxl module.
-            try:
-                sheet = self.list_of_other_workbooks[index_of_other_workbook][weekly_report_sheet_name]
-
-            except KeyError as error:
-                # the following error print will finally be included in GUI implementation of the project
-                print(error)
-                print("-" * 50)
-                return None
-
-            except Exception as error:
-                # the following error print will finally be included in GUI implementation of the project
-                print(error)
-                print("-" * 50)
-                return None
+            sheet = self.list_of_other_workbooks[index_of_other_workbook][weekly_report_sheet_name]
 
         #    ##########      STEP 3      ##########
 
@@ -518,25 +503,31 @@ class TransferDataFromWeeklyToMonthly:
             # now 'sheet' is ready for sending as a parameter to the corresponding transfer class, the syntax is
             # same as what can be seen in 'monthly/monthly_class_handler.py/
             # method operations_of_iterations_on_worksheets()'
-            weekly_report_to_be_transferred__sheet = MainSheetOfWeeklyReportToTransferDataToMonthlyReport(sheet)
 
-        #    ##########      STEP 4      ##########
+            try:
+                weekly_report_to_be_transferred__sheet = MainSheetOfWeeklyReportToTransferDataToMonthlyReport(sheet)
+
+            except Exception as error:
+                error_logs_filepath = rf'{LOGS_DIRECTORY}\error logs.txt'
+
+                with open(error_logs_filepath, 'a') as f:
+                    f.write('\n')
+                    f.write(f"{st.session_state.CURRENT_TIME} -- Type Of Report: '{st.session_state.report_type}'"
+                            f" -- SheetName Of Other Files: '{weekly_report_sheet_name}' -- error -- '{error}'")
+
+            #    ##########      STEP 4      ##########
+
+                basename_of_filename = os.path.basename(self.filenames_of_needed_other_excel_files[index_of_other_workbook])
+                self.filename_as_key__and__sheet_names_with_issue_as_value[basename_of_filename].append(weekly_report_sheet_name)
+
+                return None
 
             if weekly_report_to_be_transferred__sheet.sheet_has_issue is True:
-
-                # print("-" * 50)
-                # the following might be changed when implementing 'sum-if' because the next filenames will be needed
-                # then
 
                 # we need the basename of filename(not the fullname), the following key has already been made within
                 # 'determine_number_of_needed_other_excel_files()' method, it is a list that we will append item to it.
                 basename_of_filename = os.path.basename(self.filenames_of_needed_other_excel_files[index_of_other_workbook])
-
-                self.filename_as_key__and__sheet_names_with_issue_as_value[basename_of_filename].append(weekly_report_to_be_transferred__sheet.sheet.title)
-
-                # print(f"Within weekly report file '{self.filenames_of_needed_other_excel_files[index_of_other_workbook]}', "
-                #       f"the sheet '{weekly_report_to_be_transferred__sheet.sheet.title}' has issue which makes it "
-                #       f"impossible to transfer its data to monthly report Excel Spreadsheet file, 'transfer_data_from_weekly_to_monthly_class.py': 534")
+                self.filename_as_key__and__sheet_names_with_issue_as_value[basename_of_filename].append(weekly_report_sheet_name)
 
                 return None
 
@@ -581,8 +572,7 @@ class TransferDataFromWeeklyToMonthly:
 
             # the following length variable is used to detect from which row in monthly report we need to
             # delete rows
-            count_of_messages_of_weekly_report = len(weekly_report_to_be_transferred__sheet.
-                                                     list_of_numerical_cells_coordinates)
+            count_of_messages_of_weekly_report = len(weekly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates)
 
             # we need to know the difference integer value of last if in order to do the deletion of rows in
             # monthly report spreadsheet file.

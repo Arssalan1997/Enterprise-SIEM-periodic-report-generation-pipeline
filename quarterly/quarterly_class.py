@@ -10,6 +10,15 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
     # This class must not have 'NUMBER_OF_CURRENT_REPORT_NUMERICAL_COLUMNS' as defined in 'MainSheetOfMonthlyReport'
     NUMBER_OF_CURRENT_REPORT_NUMERICAL_COLUMNS = 3
 
+    LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS = list()  # CONSTANT VARIABLE including dates that will be
+    # updated across all worksheets
+
+    counter_to_objects = 0
+
+    sheet_names_with_issues = list()  # class attributes must be independent!
+
+    # ----------------------
+
     REPORT_PERSIAN_NAME_TO_INCLUDE_IN_FIRST_SHEET = str()  # Sample Value:'تابستان 03'
 
     # These are some values that need to be saved right before working on the worksheets since if the numerical values
@@ -19,7 +28,7 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
     LAST_SEASON_MY_BMI_TOTAL = str()
 
     def calculate_all_coordinate_attributes(self):
-        if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
+        if self.__class__.counter_to_objects < 3:    # In quarterly version of the automation => the first 2 sheets
             # should be ignored
             return None
         super().calculate_all_coordinate_attributes()   # The next worksheets can be processed with parent class
@@ -75,20 +84,15 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
 
         temp_workbook.close()
 
-        # test lines
-        # print(f"cls.LAST_SEASON_OTHER_SYSTEMS_TOTAL = {cls.LAST_SEASON_OTHER_SYSTEMS_TOTAL}")
-        # print(f"cls.LAST_SEASON_BMI_TOTAL = {cls.LAST_SEASON_BMI_TOTAL}")
-        # print(f"cls.LAST_SEASON_MY_BMI_TOTAL = {cls.LAST_SEASON_MY_BMI_TOTAL}")
-
     def remove_values_of_cells_with_numerical_data(self):
-        if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
+        if self.__class__.counter_to_objects < 3:    # In quarterly version of the automation => the first 2 sheets
             # should be ignored
             return None
 
         super().remove_values_of_cells_with_numerical_data()
 
     def delete_message_column_content(self):
-        if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
+        if self.__class__.counter_to_objects < 3:    # In quarterly version of the automation => the first 2 sheets
             # should be ignored
             return None
 
@@ -102,20 +106,20 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
         if self.__class__.counter_to_objects == 1:   # this method works only on the first worksheet
 
             # month names update
-            self.sheet["B1"] = self.__class__.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS[0]
-            self.sheet["C1"] = self.__class__.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS[1]
-            self.sheet["D1"] = self.__class__.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS[2]
+            self.sheet["B1"].value = self.__class__.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS[0]
+            self.sheet["C1"].value = self.__class__.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS[1]
+            self.sheet["D1"].value = self.__class__.LIST_HEADER_NAMES_OF_NUMERICAL_COLUMNS[2]
             # ---------------------------------------
 
             # swap last report[quarter] name to the right cell and then insert this report[quarter] name
-            self.sheet["C22"] = self.sheet["B22"].value
-            self.sheet["B22"] = self.__class__.REPORT_PERSIAN_NAME_TO_INCLUDE_IN_FIRST_SHEET
+            self.sheet["C22"].value = self.sheet["B22"].value
+            self.sheet["B22"].value = self.__class__.REPORT_PERSIAN_NAME_TO_INCLUDE_IN_FIRST_SHEET
             # ---------------------------------------
 
             # update values extracted in '.receive_filename_and_save_needed_values_on_first_sheet()' method
-            self.sheet["C23"] = self.__class__.LAST_SEASON_OTHER_SYSTEMS_TOTAL
-            self.sheet["C24"] = self.__class__.LAST_SEASON_BMI_TOTAL
-            self.sheet["C25"] = self.__class__.LAST_SEASON_MY_BMI_TOTAL
+            self.sheet["C23"].value = self.__class__.LAST_SEASON_OTHER_SYSTEMS_TOTAL
+            self.sheet["C24"].value = self.__class__.LAST_SEASON_BMI_TOTAL
+            self.sheet["C25"].value = self.__class__.LAST_SEASON_MY_BMI_TOTAL
 
     def insert_or_delete_one_column_if_needed(self):
         """
@@ -138,7 +142,7 @@ class MainSheetOfQuarterlyReport(MainSheetOfMonthlyReport):
 
     def update_all_formulas(self):
 
-        if self.__class__.counter_to_objects < 3:    # In monthly version of the automation => the first 2 sheets
+        if self.__class__.counter_to_objects < 3:    # In quarterly version of the automation => the first 2 sheets
             # should be ignored
             return None
 

@@ -92,13 +92,12 @@ class HandlerOfMainSheetOfMonthlyReport:
             sheet = self.workbook[sheet_name]
             monthly_report_sheet = MainSheetOfMonthlyReport(sheet)
 
-            # test line
-            # print(isinstance(monthly_report_sheet, MainSheetOfMonthlyReport))  # all outputs ==> 'True'
-
             monthly_report_sheet.remove_values_of_cells_with_numerical_data()
             monthly_report_sheet.delete_message_column_content()
+
             monthly_report_sheet.insert_or_delete_one_column_if_needed()   # decision on whether to do it or
             # not will be on the part of the called method itself.
+
             monthly_report_sheet.header_date_fields_update()
             monthly_report_sheet.update_font_and_style_of_the_new_numerical_column_if_inserted()
 
@@ -207,10 +206,8 @@ class HandlerOfMainSheetOfMonthlyReport:
         namely '.operation_of_select_data()'.
         """
 
-        # self.workbook.save(filename="./TEST-REPORT/Report Made of Automation.xlsx")
         self.workbook.save(filename=fr"{files_directory_of_report}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx")
         self.workbook.close()
-        # time.sleep(1)
 
     def operation_of_select_data(self, files_directory_of_report=FILES_DIRECTORY_OF_MONTHLY):
         """
@@ -220,7 +217,6 @@ class HandlerOfMainSheetOfMonthlyReport:
         '.select_data_for_line_graph()' method of 'MainSheetOfMonthlyReport' class for further processing
         """
 
-        # time.sleep(1)
         # Open the Excel file in the background
         self.app = xw.App(visible=False)  # Set visible=False to hide Excel
         # self.wb = self.app.books.open('./TEST-REPORT/Report Made of Automation.xlsx')
@@ -238,8 +234,8 @@ class HandlerOfMainSheetOfMonthlyReport:
             MainSheetOfQuarterlyReport.select_data_for_line_graph__and__clear_conditional_formatting_rules(self.wb, self.select_data_range_of_sheets)
 
     def save_final_file_operation_after_select_data_phase(self, files_directory_of_report=FILES_DIRECTORY_OF_MONTHLY):
+
         # Save the workbook
-        # self.wb.save("./TEST-REPORT/Report Made of Automation.xlsx")
         self.wb.save(fr"{files_directory_of_report}\{st.session_state.CURRENT_TIME}\Report Made by Automation System.xlsx")
 
         # Close the workbook
