@@ -638,7 +638,7 @@ class TransferDataFromWeeklyToMonthly:
 
         #            ##########      STEP 2      ##########
 
-        # ########### First Part Of Transferring Data From Forth weekly file to monthly file ###########
+        # ########### First Part Of Transferring Data From Forth Weekly File To Monthly File ###########
         """
         This part of data transfer ==> the same as what we do when we make the report manually: the SUM-IF formula 
         Insertion is what has been created using a non-formula-based approach  
@@ -696,7 +696,7 @@ class TransferDataFromWeeklyToMonthly:
                 row[3].value = 0
                 row[4].value = 0
 
-        # ########### Second Part Of Transferring Data From Forth weekly file to monthly file ###########
+        # ########### Second Part Of Transferring Data From Forth Weekly File To Monthly File ###########
         """
         This part of data transfer ==> the same as what we do when we make the report manually: the step after  
         SUM-IF formula Insertion: copying data from forth weekly report file(the corresponding sheet) and checking for

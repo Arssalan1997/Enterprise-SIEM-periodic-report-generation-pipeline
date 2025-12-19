@@ -72,6 +72,9 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
                 self.transfer_data_from_monthly_to_quarterly_class__object.\
                     copy_data_from_first_monthly_excel_file_to_report_file(quarterly_report_sheet)
 
+                self.transfer_data_from_monthly_to_quarterly_class__object.\
+                    copy_data_from_second_monthly_excel_file_to_report_file(quarterly_report_sheet)
+
                 """
                 The following is used to make 'self.select_data_range_of_sheets' which is a list containing tuples
                 with 3 items within each tuple.

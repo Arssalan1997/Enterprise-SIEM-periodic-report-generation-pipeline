@@ -182,7 +182,7 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
             # 'monthly_report_to_be_transferred__sheet' object
 
     @staticmethod
-    def insert_needed_number_of_rows_in_monthly_report(quarterly_report_sheet, number_of_rows_to_insert):
+    def insert_needed_number_of_rows_in_quarterly_report(quarterly_report_sheet, number_of_rows_to_insert):
         """
         :param quarterly_report_sheet: the tasks are done towards sheets of quarterly report spreadsheet file
         :param number_of_rows_to_insert: the difference between rows in monthly and quarterly reports
@@ -461,132 +461,90 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
             number_of_rows_to_insert = len(monthly_report_to_be_transferred__sheet.list_of_numerical_cells_coordinates) - \
                                        len(quarterly_report_sheet.list_of_numerical_cells_coordinates)
 
-            self.insert_needed_number_of_rows_in_monthly_report(quarterly_report_sheet, number_of_rows_to_insert)
+            self.insert_needed_number_of_rows_in_quarterly_report(quarterly_report_sheet, number_of_rows_to_insert)
 
             self.update_boundary_coordinates_because_row_removal_or_insertion_happened(quarterly_report_sheet)
 
             self.copy_data_step(quarterly_report_sheet, monthly_report_to_be_transferred__sheet)
 
-    def transfer_data_from_forth_weekly_excel_file_using_sum_if_formula_to_report_file(self, monthly_report_sheet):
+    def copy_data_from_second_monthly_excel_file_to_report_file(self, quarterly_report_sheet):
         """
-        manages transfer operations of forth weekly report Excel Spreadsheet File to monthly report
-        Excel Spreadsheet File for each sheet of monthly_report. At every call one of monthly report sheets is passed
-        to this method.
+        manages transfer operations of second monthly report Excel Spreadsheet File to quarterly report
+        Excel Spreadsheet File for each sheet of quarterly_report. At every call one of quarterly report sheets is
+        passed to this method.
 
-        :param monthly_report_sheet: called directly from 'monthly_class_handler.py' ==> 'monthly_report_sheet' is
+        :param quarterly_report_sheet: called directly from 'quarterly_class_handler.py' ==> 'quarterly_report_sheet' is
         delivered first to this method within this class
-        :return: None(does the operations towards monthly report file with no need to return a value)
+        :return: None(does the operations towards quarterly report file with no need to return a value)
         """
 
         #            ##########      STEP 1      ##########
 
-        weekly_report_to_be_transferred__sheet = self. \
-            provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from(monthly_report_sheet,
-                                                                             index_of_other_workbook=1)
+        monthly_report_to_be_transferred__sheet = self.\
+            provides_each_sheet_of_other_excel_spreadsheet_to_copy_data_from(quarterly_report_sheet, index_of_other_workbook=1)
 
-        # for the weekly report sheets that have issues, the return value from the last call is 'None' ==> we need
-        # to return the 'None' to the first method call (which is from the 'monthly_class_handler.py') to prevent
-        # from continuation of execution in this method leading to errors as
-        # 'weekly_report_to_be_transferred__sheet' would be 'None'
-        if weekly_report_to_be_transferred__sheet is None:
+        if monthly_report_to_be_transferred__sheet is None:
             return None
 
         #            ##########      STEP 2      ##########
 
-        # ########### First Part Of Transferring Data From Forth weekly file to monthly file ###########
+        # ########### First Part Of Transferring Data From Second Monthly File To Quarterly File ###########
         """
-        This part of data transfer ==> the same as what we do when we make the report manually: the SUM-IF formula 
-        Insertion is what has been created using a non-formula-based approach  
-
-        The used method: we will iterate over row records of monthly report file and 
-        check whether the message value is in 'weekly_report_to_be_transferred__sheet.list_of_messages'
-
-        if yes ==>
-        we will have a nested for-loop iterating on 'records of weekly file'[a zip object is just made as the first step
-        that represents for 'records of weekly file']to look for the target message; if it is found ==> 
-        'last_week_value' and 'this_week_value'[==numerical values of third and forth weekly file sheet] numerical 
-         values of the corresponding row record are copied to the right positions in monthly report file(third and forth 
-         numerical columns)
-
-        if no ==> 
-        '0's will be copied to the right positions in monthly report file(third and forth numerical columns)
+        Identical To 'transfer_data_from_forth_weekly_excel_file_using_sum_if_formula_to_report_file()' method within
+        the parent class
         """
 
-        # a zip object is made for the simplicity of accessing 'message', 'last_week_value', and 'this_week_value',
-        list_zip_of_records_of_weekly_report_sheet = list(zip(
-            weekly_report_to_be_transferred__sheet.list_of_messages,
-            weekly_report_to_be_transferred__sheet.list_of_last_week_values,
-            weekly_report_to_be_transferred__sheet.list_of_this_week_values
+        # a zip object is made for the simplicity of accessing 'message' and 'total_value'.
+        list_zip_of_records_of_monthly_report_sheet = list(zip(
+            monthly_report_to_be_transferred__sheet.list_of_messages,
+            monthly_report_to_be_transferred__sheet.list_of_total_values,
         ))
 
-        # the matrix of all numerical columns concatenated by the message column are selected for the loop, the narrow
-        # point over here is that we do not need the first and second numerical columns(corresponding for first and
-        # second weekly report file numerical values), but for the simplicity of having one-step loop they are also
-        # included
-        for row in monthly_report_sheet.sheet.iter_rows(
-                min_row=monthly_report_sheet.sheet[monthly_report_sheet.coordinate_of_up_left_number_boundary].row,
-                max_row=monthly_report_sheet.sheet[monthly_report_sheet.coordinate_of_down_right_number_boundary].row,
-                min_col=monthly_report_sheet.sheet[
-                            monthly_report_sheet.coordinate_of_up_left_number_boundary].column - 1,
-                max_col=monthly_report_sheet.sheet[monthly_report_sheet.coordinate_of_down_right_number_boundary].column
+        for row in quarterly_report_sheet.sheet.iter_rows(
+                min_row=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_up_left_number_boundary].row,
+                max_row=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_right_number_boundary].row,
+                min_col=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_up_left_number_boundary].column - 1,
+                max_col=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_right_number_boundary].column
         ):
 
             # 'row[0]': the first cell of each row which has the message as its value; if it exists within the target
-            # list ==> the process to go for its corresponding 'last_week_value', and 'this_week_value' starts
-            if row[0].value in weekly_report_to_be_transferred__sheet.list_of_messages:
+            # list ==> the process to go for its corresponding 'total_value' starts
+            if row[0].value in monthly_report_to_be_transferred__sheet.list_of_messages:
 
-                for row_record in list_zip_of_records_of_weekly_report_sheet:
+                for row_record in list_zip_of_records_of_monthly_report_sheet:
 
                     if row[0].value == row_record[0]:
-                        row[3].value = row_record[1]
-                        row[4].value = row_record[2]
+                        row[2].value = row_record[1]
 
                         break  # as soon as the message is found in a 'row_record' of the 'list_zip_...', there will
                         # be no need to continue the inner loop as there will be no 'row_record's afterwards that has
-                        # the same message[if the weekly report sheet has non-repeated messages]
+                        # the same message[if the monthly report sheet has non-repeated messages]
 
-            # if not(the message does not exist in target list) ==> '0's filled for the numerical value cells of third
-            # and forth weeks
+            # if not(the message does not exist in target list) ==> '0's filled for the numerical value cells of second
+            # month
             else:
-                row[3].value = 0
-                row[4].value = 0
+                row[2].value = 0
 
-        # ########### Second Part Of Transferring Data From Forth weekly file to monthly file ###########
+        # ########### Second Part Of Transferring Data From Second Monthly File To Quarterly File ###########
+
         """
-        This part of data transfer ==> the same as what we do when we make the report manually: the step after  
-        SUM-IF formula Insertion: copying data from forth weekly report file(the corresponding sheet) and checking for
-        duplicates of messages between monthly report file sheet and weekly report file sheet and then inserting needed
-        number of rows to the main report space and then finally transferring corresponding data of the 'new messages'
-        to the newly made available space of the report     
-
-        The approach towards making the operation happen:
-
-        sub-step 1: finding the messages that exist in weekly report file sheet but do not exist in monthly report  
-        file sheet
-
-        sub-step 2: exception handling which is described later
-
-        sub-step 3: finding needed number of rows to insert to monthly report sheet for including messages(with their
-        numerical values of third and forth weeks) that exist in weekly report file sheet while do not exist in monthly
-        report file sheet
-
-        sub-step 4: transferring new messages with their numerical records(the ones not existed in monthly report file  
-        sheet before) from forth weekly report file(that also includes third week data) to the monthly report file sheet
+        Identical To 'transfer_data_from_forth_weekly_excel_file_using_sum_if_formula_to_report_file()' method within
+        the parent class
         """
 
         # #################### Sub-Step 1 ####################
 
-        # '.list_of_messages' of 'monthly_report_sheet' is not ready without calling the following method, in other
+        # '.list_of_messages' of 'quarterly_report_sheet' is not ready without calling the following method, in other
         # words ==> if '.make_list_of_messages()' is not called, we will have a null '.list_of_messages' for the next
         # list that is going to be made
-        monthly_report_sheet.make_list_of_messages()
+        quarterly_report_sheet.make_list_of_messages()
 
-        # making this list is same as checking for duplicate values between monthly report file sheet and weekly report
-        # file sheet, and then selecting out the ones not highlighted which stand for the ones in weekly report sheet
-        # but not in monthly report sheet
-        messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet = \
-            [message for message in weekly_report_to_be_transferred__sheet.list_of_messages if
-             message not in monthly_report_sheet.list_of_messages]
+        # making this list is same as checking for duplicate values between quarterly report file sheet and monthly
+        # report file sheet, and then selecting out the ones not highlighted which stand for the ones in monthly report
+        # sheet but not in quarterly report sheet
+        messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet = \
+            [message for message in monthly_report_to_be_transferred__sheet.list_of_messages if
+             message not in quarterly_report_sheet.list_of_messages]
 
         # #################### Sub-Step 2 ####################
 
@@ -597,69 +555,63 @@ class TransferDataFromMonthlyToQuarterly(TransferDataFromWeeklyToMonthly):
         # following code segment to see that clearing the target list that has only on string-item which has not a
         # valid value ==> not going to make problems
 
-        if len(messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet) == 1 and \
-                type(messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet[0]) == str and \
-                messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet[0].startswith("=SUM("):
-            messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet.clear()
+        if len(messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet) == 1 and \
+                type(messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet[0]) == str and \
+                messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet[0].startswith("=SUM("):
+            messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet.clear()
 
         # #################### Sub-Step 3 ####################
 
-        # items within 'messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet' must be added to the monthly
-        # report file sheet main space with their corresponding numerical values of third and forth weeks
-        number_of_rows_to_insert = len(messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet)
+        # items within 'messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet' must be added to the
+        # quarterly report file sheet main space with their corresponding numerical values of total.
+        number_of_rows_to_insert = len(messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet)
 
         # the insertion-related operations makes sense if the following condition is evaluated as 'True'
         if number_of_rows_to_insert >= 1:
 
-            self.insert_needed_number_of_rows_in_monthly_report(monthly_report_sheet, number_of_rows_to_insert)
-            self.update_boundary_coordinates_because_row_removal_or_insertion_happened(monthly_report_sheet)
+            self.insert_needed_number_of_rows_in_quarterly_report(quarterly_report_sheet, number_of_rows_to_insert)
+            self.update_boundary_coordinates_because_row_removal_or_insertion_happened(quarterly_report_sheet)
 
             # #################### Sub-Step 4 ####################
 
             # the number of rows that are going to be included in following for-loop(the
             # number of iterations) is the same as the number of messages in the following list:
-            # 'messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet' ==> so we can do a simultaneous loop
+            # 'messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet' ==> so we can do a simultaneous loop
             # with the help of the following helping-index.
             index = 0
 
             # the matrix of all numerical columns concatenated by the message column are selected for the loop, the rows
             # of the matrix belongs to the newly-inserted cells that are going to be filled with messages and their
-            # corresponding numerical values for third and forth week('0's filled as values for cells of first and
-            # second week since the message did not exist in the monthly report file sheet before)
-            for row in monthly_report_sheet.sheet.iter_rows(
-                    min_row=monthly_report_sheet.sheet[
-                                monthly_report_sheet.coordinate_of_down_left_number_boundary].row - number_of_rows_to_insert + 1,
-                    max_row=monthly_report_sheet.sheet[
-                        monthly_report_sheet.coordinate_of_down_right_number_boundary].row,
-                    min_col=monthly_report_sheet.sheet[
-                                monthly_report_sheet.coordinate_of_down_left_number_boundary].column - 1,
-                    max_col=monthly_report_sheet.sheet[
-                        monthly_report_sheet.coordinate_of_down_right_number_boundary].column
+            # corresponding numerical values for total('0's filled as values for cells of first month
+            # since the message did not exist in the quarterly report file sheet before)
+            for row in quarterly_report_sheet.sheet.iter_rows(
+                    min_row=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_left_number_boundary].row - number_of_rows_to_insert + 1,
+                    max_row=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_right_number_boundary].row,
+                    min_col=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_left_number_boundary].column - 1,
+                    max_col=quarterly_report_sheet.sheet[quarterly_report_sheet.coordinate_of_down_right_number_boundary].column
             ):
 
                 # for each newly-inserted row, we have a new message to be filled for the value of message column
                 # corresponding cell which will be done after its record is found in the inner for-loop
-                message = messages_not_in_monthly_report_sheet_but_in_weekly_report_sheet[index]
+                message = messages_not_in_quarterly_report_sheet_but_in_monthly_report_sheet[index]
                 index += 1  # makes it possible to iterate on the items of the list at the same time with the looping
                 # on the rows that are newly inserted
 
                 # now that we have one of newly-inserted row with one of the new messages ==> we should look for it
-                # within first items of 'list_zip_of_records_of_weekly_report_sheet' and after it is found ==> take the
-                # message with numerical values of third and forth weeks and fill the corresponding cell values of
-                # monthly report file sheet with the obtained values(first and second weeks have '0's as numerical cell
-                # values since the messages are new to the monthly report file sheet)
-                for row_record in list_zip_of_records_of_weekly_report_sheet:
+                # within first items of 'list_zip_of_records_of_monthly_report_sheet' and after it is found ==> take the
+                # message with numerical values of total and fill the corresponding cell values of
+                # quarterly report file sheet with the obtained values(first month has '0's as numerical
+                # cell values since the messages are new to the quarterly report file sheet)
+                for row_record in list_zip_of_records_of_monthly_report_sheet:
 
                     if row_record[0] == message:
                         row[0].value = message  # filling the cell value with the new 'message'
                         row[1].value = 0  # filling the cell value with '0'
-                        row[2].value = 0  # filling the cell value with '0'
-                        row[3].value = row_record[1]  # filling the cell value with 'last_week_value'
-                        row[4].value = row_record[2]  # filling the cell value with 'this_week_value'
+                        row[2].value = row_record[1]  # filling the cell value with 'total_value'
 
                         break  # as soon as the message is found in a 'row_record' of the 'list_zip_...', there will
                         # be no need to continue the inner loop as there will be no 'row_record's afterwards that has
-                        # the same message[if the weekly report sheet has non-repeated messages]
+                        # the same message[if the monthly report sheet has non-repeated messages]
 
     def transfer_data_from_fifth_weekly_excel_file_using_sum_if_formula_to_report_file(self, monthly_report_sheet):
         """
