@@ -107,6 +107,8 @@ class HandlerOfMainSheetOfQuarterlyReport(HandlerOfMainSheetOfMonthlyReport):
             quarterly_report_sheet.update_all_formulas()
 
     def operations_after_iterations_on_worksheets(self):
+        from quarterly.make_needed_formulas_within_first_sheet_of_quarterly_file import make_needed_formulas
+        make_needed_formulas(self.workbook)
 
         self.transfer_data_from_monthly_to_quarterly_class__object.close_monthly_report_excel_spreadsheet_files()
 

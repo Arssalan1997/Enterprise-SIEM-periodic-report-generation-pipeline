@@ -429,7 +429,17 @@ class MainSheetOfMonthlyReport:
             # 'coordinate_of_sum_cell' is ready to be appended to the list
             coordinates_of_sum_cells_of_numerical_columns.append(coordinate_of_sum_cell)
 
-        # #####################
+        # ################################ Will be needed within: #######################################
+        # ########## '\quarterly\make_needed_formulas_within_first_sheet_of_quarterly_file.py' ##########
+
+        from quarterly import MainSheetOfQuarterlyReport
+        from CONSTANTS import SHEET_NAMES__AND__CORRESPONDING_MONTHLY_SUM_COORDINATES
+
+        if self.__class__ == MainSheetOfQuarterlyReport:
+            if self.sheet.title.strip() in SHEET_NAMES__AND__CORRESPONDING_MONTHLY_SUM_COORDINATES.keys():
+                SHEET_NAMES__AND__CORRESPONDING_MONTHLY_SUM_COORDINATES[self.sheet.title.strip()] = list(coordinates_of_sum_cells_of_numerical_columns)
+
+        # ###############################################################################################
 
         index = 0   # as the name of the variable suggests, it helps to sort of iterate at the same time on some other
         # iterator other than 'coordinates_of_sum_cells_of_numerical_columns'. Question: so what is that iterator:
