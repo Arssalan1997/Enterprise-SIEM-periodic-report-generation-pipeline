@@ -1,17 +1,15 @@
-*.txt
 *.docx
 .idea/
 __pycache__/
-archive/
 Code Revision/
-files/
 Learning/
-logs/
+Presentation/
 venv/
+weekly/
 گزارش آماده برای تست/
-test.xlsx
+server commit hash.txt
 Test1.py
 Test2.py
 Test3.py
 Test4.py
-Presentation/
+Virtual Machine Info.txt
