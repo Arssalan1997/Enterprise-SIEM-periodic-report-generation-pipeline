@@ -1,40 +1,40 @@
-ArcSightRules,ArcSightRules
-ArcSightRulesMY,ArcSightRulesBAAM
-ArcSightRulesBMI,ArcSightRulesBMI
-ArcSightRulesMobileGW,ArcSightRulesMobileGW
-ArcSightRules-top Countries,ArcSightRules-Top Country
-ArcSightRulesMY-top Countries,ArcSightRulesBAAM-Top Country
-ArcSightRulesBMI-top Countries,ArcSightRulesBMI-Top Country
-EventSources,EventSources
-Fortigate Dropped BAAM,Fortigate Dropped BAAM
-Fortigate Dropped BMI,Fortigate Dropped BMI
-Fortigate Dropped MobileGW,Fortigate Dropped MobileGW
-Fortigate,Fortigate
-Fortiweb Matched BAAM-BMI,Fortiweb Matched BAAM-BMI
-Fortiweb Matched BAAM,Fortiweb Matched BAAM
-Fortiweb Matched BMI,Fortiweb Matched BMI
-Fortiweb Matched MobileGW,Fortiweb Matched MobileGW
-Fortiweb,Fortiweb
-FTD Blocked BAAM-BMI,FTD Blocked BAAM-BMI
-FTD Blocked BAAM,FTD Blocked BAAM
-FTD Blocked BMI,FTD Blocked BMI
-FTD Blocked MobileGW,FTD Blocked MobileGW
-FTD Blocked Other,FTD Blocker Other
-FTD-IPS,FTD-IPS
-FTD Malware Block,FTD-Malware Block
-FTD-SecInt,FTD-SecInt
-HTTPCodesMYBMI,HTTP Codes BAAM
-HTTPCodesBMI,HTTP Codes BMI
-HTTP Codes MobileGW,HTTP Codes MobileGW
-HTTP Codes Other,HTTP Codes Other
-ProtocolsTraffic on BAAM_BMI,ProtocolsTraffic on baam_bmi
-ProtocolsTraffic on MY BMI,ProtocolsTraffic on BAAM
-ProtocolsTraffic on BMI,ProtocolsTraffic on BMI
-ProtocolsTraffic on MobileGW,ProtocolsTraffic on MobileGW
-ProtocolsTraffic on Others,ProtocolsTraffic on other
-Source nonTCP MYBMI,Source nonTCP BAAM
-Source nonTCP BMI,Source nonTCP BMI
-Source nonTCP Other,Source nonTCP Other
-Source TCP BMI,Source TCP BMI
-Source TCP MY BMI,Source TCP BAAM
-Source TCP Others,Source TCP other
+sheetname1,corresponding_sheetname1
+sheetname2,corresponding_sheetname2
+sheetname3,corresponding_sheetname3
+sheetname4,corresponding_sheetname4
+sheetname5,corresponding_sheetname5
+sheetname6,corresponding_sheetname6
+sheetname7,corresponding_sheetname7
+sheetname8,corresponding_sheetname8
+sheetname9,corresponding_sheetname9
+sheetname10,corresponding_sheetname10
+sheetname11,corresponding_sheetname11
+sheetname12,corresponding_sheetname12
+sheetname13,corresponding_sheetname13
+sheetname14,corresponding_sheetname14
+sheetname15,corresponding_sheetname15
+sheetname16,corresponding_sheetname16
+sheetname17,corresponding_sheetname17
+sheetname18,corresponding_sheetname18
+sheetname19,corresponding_sheetname19
+sheetname20,corresponding_sheetname20
+sheetname21,corresponding_sheetname21
+sheetname22,corresponding_sheetname22
+sheetname23,corresponding_sheetname23
+sheetname24,corresponding_sheetname24
+sheetname25,corresponding_sheetname25
+sheetname26,corresponding_sheetname26
+sheetname27,corresponding_sheetname27
+sheetname28,corresponding_sheetname28
+sheetname29,corresponding_sheetname29
+sheetname30,corresponding_sheetname30
+sheetname31,corresponding_sheetname31
+sheetname32,corresponding_sheetname32
+sheetname33,corresponding_sheetname33
+sheetname34,corresponding_sheetname34
+sheetname35,corresponding_sheetname35
+sheetname36,corresponding_sheetname36
+sheetname37,corresponding_sheetname37
+sheetname38,corresponding_sheetname38
+sheetname39,corresponding_sheetname39
+sheetname40,corresponding_sheetname40
