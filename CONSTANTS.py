@@ -6,4 +6,4 @@ MAPPING_FILES_DIRECTORY = r"D:\Data Science\Projects\SIEM Report Automation With
 LOGS_DIRECTORY = r"D:\Data Science\Projects\SIEM Report Automation With Python Project\logs"
 SHEET_NAMES__AND__CORRESPONDING_MONTHLY_SUM_COORDINATES = {"sheetname1": list(),
                                                            "sheetname2": list(),
-                                                           "sheetname3": list()}
+                                                           "sheetname3": list()}    # Original Sheet Names Are Not Used.
