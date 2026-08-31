@@ -356,7 +356,7 @@ MIT License - See `LICENSE` file for details.
 
 ## Author
 
-**Arssalan1997** — Software Engineer
+**Arssalan1997** — Data Scientist
 
 This project represents sophisticated **data engineering** focused on system design, modular architecture, and operational thinking. It demonstrates the ability to solve real enterprise problems with clean, maintainable, production-grade code.
 
