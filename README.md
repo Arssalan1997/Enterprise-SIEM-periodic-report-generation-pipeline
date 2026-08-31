@@ -263,7 +263,7 @@ The application will open at `http://localhost:8501`
 
 #### Quarterly Report Generation
 1. **Select Report Type** → Choose "Quarterly"
-2. **Enter Report Name** → Persian season identifier (e.g., "04 فصلشش")
+2. **Enter Report Name** → Persian season identifier (e.g., "04 تابستان")
 3. **Upload Previous Season Report** → Last quarter's output
 4. **Enter Month Names** → Persian calendar month labels
 5. **Upload Monthly Reports** → Select 3 monthly report files (specify week counts each)
