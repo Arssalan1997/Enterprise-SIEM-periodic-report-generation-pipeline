@@ -189,7 +189,7 @@ Quarterly Report (Updated *.xlsx)
 |--------|-------|--------------|
 | **Total Lines of Code** | 4,577 | Substantial enterprise application |
 | **Number of Modules** | 35 files | Sophisticated modular architecture |
-| **Max Single File** | 59,380 lines | `transfer_data_from_weekly_to_monthly_class.py` (core algorithm) |
+| **Max Single File** | 974 lines | `transfer_data_from_weekly_to_monthly_class.py` |
 | **Package Structure** | 3 packages + entry point | Professional separation of concerns |
 | **UI Pages** | 14 Streamlit modules | Comprehensive, guided user workflows |
 | **Execution Phases** | 8 sequential stages | Detailed orchestration control |
