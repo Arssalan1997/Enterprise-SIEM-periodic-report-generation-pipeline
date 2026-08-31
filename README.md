@@ -104,7 +104,7 @@ SIEM-Periodic-Report-Generation-Pipeline/
 
 ### Execution Architecture: Phase-Based Orchestration
 
-The system executes through **8 sequential phases**, coordinated by handler classes:
+The system executes through **6 sequential phases**, coordinated by handler classes:
 
 ```python
 # main.py orchestration flow
@@ -192,7 +192,7 @@ Quarterly Report (Updated *.xlsx)
 | **Max Single File** | 974 lines | `transfer_data_from_weekly_to_monthly_class.py` |
 | **Package Structure** | 3 packages + entry point | Professional separation of concerns |
 | **UI Pages** | 14 Streamlit modules | Comprehensive, guided user workflows |
-| **Execution Phases** | 8 sequential stages | Detailed orchestration control |
+| **Execution Phases** | 6 sequential stages | Detailed orchestration control: initialization → iteration → post-processing → save → data selection → finalization |
 
 ---
 
