@@ -275,16 +275,15 @@ The application will open at `http://localhost:8501`
 
 ### Generated Report Structure
 
-**Monthly Report File** (4-5 sheets)
+**Monthly Report File** (40+ sheets)
 - Multiple worksheets with data aggregation tables
 - 4 or 5 numerical columns (week counts)
 - `Total` & `Total*Aggregation` summary columns
 - Dynamic SUM formulas at bottom of each sheet
 - Anonymized rule names and values
 
-**Quarterly Report File** (4+ sheets)
+**Quarterly Report File** (40+ sheets)
 - 1st sheet: Overall statistics (calculated from other sheets)
-- 3 data sheets: One per month in Persian calendar
 - 3 numerical columns (one per input month)
 - `Total` column with aggregated values
 - Dynamic formulas for quarterly-level calculations
