@@ -99,31 +99,6 @@ SIEM-Periodic-Report-Generation-Pipeline/
 ├── requirements.txt                         # Dependencies
 └── SIEMReportsAutomationApplication.bat     # Windows launcher
 ```
-### System Design Sophistication
-
-#### Modular Architecture (Separation of Concerns)
-
-┌─────────────────────────────────────────┐
-│         STREAMLIT FRONTEND (pages/)     │  14 UI modules
-│    User inputs, file uploads, download  │  
-└────────────────┬────────────────────────┘
-                 │
-┌────────────────▼────────────────────────┐
-│         ORCHESTRATION LAYER             │  main.py + introduction.py
-│    Phase-based pipeline coordination    │  
-└────────────────┬────────────────────────┘
-                 │
-┌────────────────▼────────────────────────┐
-│  MONTHLY/QUARTERLY HANDLERS             │  Handler classes
-│  Template method pattern execution      │  
-└────────────────┬────────────────────────┘
-                 │
-┌────────────────▼────────────────────────┐
-│  CORE PROCESSING CLASSES                │  Data transfer classes
-│  Weekly→Monthly, Monthly→Quarterly      │  Matrix algorithm
-│  Data aggregation & transformation      │  
-└─────────────────────────────────────────┘
-
 ---
 
 ### Execution Architecture: Phase-Based Orchestration
