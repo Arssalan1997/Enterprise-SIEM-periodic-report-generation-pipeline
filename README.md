@@ -101,7 +101,7 @@ SIEM-Periodic-Report-Generation-Pipeline/
 ```
 
 ### System Design Sophistication
-
+---
 #### Modular Architecture (Separation of Concerns)
 
 ```
