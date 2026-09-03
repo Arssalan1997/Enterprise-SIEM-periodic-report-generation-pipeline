@@ -100,9 +100,9 @@ SIEM-Periodic-Report-Generation-Pipeline/
 └── SIEMReportsAutomationApplication.bat     # Windows launcher
 ```
 
-### System Design Sophistication
-___
-#### Modular Architecture (Separation of Concerns)
+## System Design Sophistication
+
+### Modular Architecture (Separation of Concerns)
 
 ```
 ┌─────────────────────────────────────────┐
