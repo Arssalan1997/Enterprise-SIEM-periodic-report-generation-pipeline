@@ -334,7 +334,7 @@ This system is **report-agnostic** and easily adaptable to:
 - Non-security domains (financial reports, operational metrics, etc.)
 - Any hierarchical data collection scenario with monthly/quarterly aggregation
 
-**Core Principle:** Algorithm and orchestration remain unchanged; only data sources and sheet names require customization.
+**Core Principle:** The orchestration architecture (phase-based handlers, Streamlit UI pattern) is generalizable. The algorithm itself is specialized to spreadsheet automation with variable-dimension consolidation.
 
 ---
 
