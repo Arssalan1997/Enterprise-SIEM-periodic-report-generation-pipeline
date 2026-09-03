@@ -111,7 +111,7 @@ SIEM-Periodic-Report-Generation-Pipeline/
 └────────────────┬────────────────────────┘
                  │
 ┌────────────────▼────────────────────────┐
-│         ORCHESTRATION LAYER             │  main.py + introduction.py
+│         ORCHESTRATION LAYER             │  main.py
 │    Phase-based pipeline coordination    │  
 └────────────────┬────────────────────────┘
                  │
