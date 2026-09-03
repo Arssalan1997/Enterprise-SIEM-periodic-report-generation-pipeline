@@ -127,6 +127,18 @@ SIEM-Periodic-Report-Generation-Pipeline/
 └─────────────────────────────────────────┘
 
 ```
+
+### The Matrix Algorithm (Core Innovation)
+
+The **matrix-based coordinate mapping system** is the architectural cornerstone:
+
+1. **Dynamic Dimensionality:** Handles variable column counts (4 or 5 weeks/months)
+2. **Coordinate Persistence:** Maintains a matrix of cell references `[B2→C2, D2→F2, ...]`
+3. **Formula Regeneration:** On each data import, recalculates all SUM formula ranges
+4. **Linear Algebra Application:** Uses matrix indexing for scalable, adaptive automation
+
+**Result:** Zero manual formula updates across report regenerations—a powerful demonstration of algorithmic thinking applied to real-world spreadsheet automation.
+
 ---
 
 ### Execution Architecture: Phase-Based Orchestration
@@ -144,19 +156,6 @@ Phase 6: save_final_file_operation_after_select_data_phase() (92-100%)
 ```
 
 **OOP Design Pattern:** Base handler class (`HandlerOfMainSheetOfMonthlyReport`) defines phase-based template. Quarterly handler (`HandlerOfMainSheetOfQuarterlyReport`) extends via inheritance, demonstrating **multi-layer polymorphism** while maintaining DRY principles.
-
----
-
-### The Matrix Algorithm (Core Innovation)
-
-The **matrix-based coordinate mapping system** is the architectural cornerstone:
-
-1. **Dynamic Dimensionality:** Handles variable column counts (4 or 5 weeks/months)
-2. **Coordinate Persistence:** Maintains a matrix of cell references `[B2→C2, D2→F2, ...]`
-3. **Formula Regeneration:** On each data import, recalculates all SUM formula ranges
-4. **Linear Algebra Application:** Uses matrix indexing for scalable, adaptive automation
-
-**Result:** Zero manual formula updates across report regenerations—a powerful demonstration of algorithmic thinking applied to real-world spreadsheet automation.
 
 ---
 
